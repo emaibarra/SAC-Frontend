@@ -31,8 +31,21 @@ export class LoginComponent {
         localStorage.setItem('token', respuesta.token);
         localStorage.setItem('rol', respuesta.rol); 
 
-        // Navegamos al dashboard
-        this.router.navigate(['/admin']);
+        const rolAsignado = respuesta.rol.toUpperCase(); // Aseguramos que esté en mayúsculas por si acaso
+
+        if (rolAsignado === 'ADMINISTRADOR') {
+          this.router.navigate(['/admin']); // Ruta hacia el dashboard del admin
+        } 
+        else if (rolAsignado === 'GERENTE' || rolAsignado === 'EMPRESA') {
+          this.router.navigate(['/gerente/dashboard']); // Ruta hacia el dashboard de la empresa
+        } 
+        else if (rolAsignado === 'TECNICO') {
+          this.router.navigate(['/tecnico/dashboard']); // Ruta hacia el dashboard del técnico
+        } 
+        else {
+          // Si el rol es "CLIENTE" o cualquier otro que no esté mapeado arriba, lo enviamos al inicio
+          this.router.navigate(['/home']); 
+        }
       },
       error: (error) => {
         console.error('Error de login', error);
