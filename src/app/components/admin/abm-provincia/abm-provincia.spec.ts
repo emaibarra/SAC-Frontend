@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AbmProvincia } from './abm-provincia';
+import { AbmProvinciaComponent } from './abm-provincia.component';
 
-describe('AbmProvincia', () => {
-  let component: AbmProvincia;
-  let fixture: ComponentFixture<AbmProvincia>;
+describe('AbmProvinciaComponent', () => {
+  let component: AbmProvinciaComponent;
+  let fixture: ComponentFixture<AbmProvinciaComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AbmProvincia],
+      imports: [AbmProvinciaComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AbmProvincia);
+    fixture = TestBed.createComponent(AbmProvinciaComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
