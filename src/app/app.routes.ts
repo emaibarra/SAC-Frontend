@@ -4,6 +4,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { AbmEmpresaComponent } from './components/admin/abm-empresa/abm-empresa.component';
 import { AbmProvinciaComponent } from './components/admin/abm-provincia/abm-provincia.component';
+import { AbmZonaComponent } from './components/admin/abm-zona/abm-zona';
 // Si tienes un componente principal para el dashboard, descomenta y ajusta esta línea:
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 
@@ -32,7 +33,12 @@ export const routes: Routes = [
 
   // <-- Agregamos la ruta del gerente/empresa
   { path: 'gerente/dashboard', component: GerenteDashboardComponent },
-
+{ 
+  path: 'admin/zonas', 
+  component: AbmZonaComponent,
+  canActivate: [roleGuard],
+  data: { rolEsperado: 'ADMINISTRADOR' } 
+},
   // Redirecciones por defecto
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
