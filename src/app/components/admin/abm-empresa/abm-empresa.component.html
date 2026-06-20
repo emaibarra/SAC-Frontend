@@ -60,7 +60,7 @@
                 📍 {{ empresa.empresaDireccion }} | 📞 {{ empresa.empresaTelefono }} | 🧑‍💻 Usuario: {{ empresa.usuario?.username || 'Sin usuario' }}
               </span>
             </div>
-            <button style="background: var(--color-naranja-teja); color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 12px;">Eliminar</button>
+            <button (click)="eliminarEmpresa(empresa.empresaId)" style="background: var(--color-naranja-teja); color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 12px;">Eliminar</button>
           </li>
         }
       </ul>

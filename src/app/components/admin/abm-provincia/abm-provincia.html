@@ -1,1 +1,44 @@
-<p>abm-provincia works!</p>
+<div style="padding: 20px; font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
+  
+  <!-- Botón Volver -->
+  <button routerLink="/admin" style="margin-bottom: 20px; padding: 10px 20px; background: var(--color-gris); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+    ⬅ Volver al Dashboard
+  </button>
+
+  <!-- Tarjeta Principal -->
+  <div style="background: var(--color-fondo-panel); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(42, 43, 83, 0.08);">
+    
+    <h3 style="color: var(--color-azul-oscuro); margin-top: 0; border-bottom: 2px solid var(--color-naranja-claro); padding-bottom: 10px;">
+      🗺️ Gestión de Provincias
+    </h3>
+    <p style="color: var(--color-gris); font-size: 14px;">Administra las provincias en las que opera el sistema SAC.</p>
+    
+    <!-- Formulario -->
+    <form (ngSubmit)="guardarProvincia()" style="margin: 25px 0; display: flex; flex-wrap: wrap; gap: 15px;">
+       <input type="text" name="nombre" [(ngModel)]="nuevaProvincia.provinciaNombre" placeholder="Nombre de la Provincia (Ej. Mendoza)" required style="flex: 1; min-width: 200px; padding: 12px; border: 1px solid var(--color-gris); border-radius: 6px; outline: none;">
+       
+       <!-- Botón de Acción Naranja -->
+       <button type="submit" [disabled]="!nuevaProvincia.provinciaNombre" style="padding: 12px 25px; background: var(--color-naranja-claro); color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-naranja-teja)'" onmouseout="this.style.backgroundColor='var(--color-naranja-claro)'">
+         Guardar
+       </button>
+    </form>
+
+    <h4 style="color: var(--color-azul-medio); margin-top: 30px;">Lista de Provincias Registradas</h4>
+    
+    <!-- Lista Dinámica -->
+    @if (provincias.length === 0) {
+      <p style="color: var(--color-gris); font-style: italic; text-align: center; padding: 20px;">No hay provincias cargadas en la base de datos...</p>
+    } @else {
+      <ul style="list-style-type: none; padding: 0; margin: 0;">
+        @for (provincia of provincias; track provincia.provinciaId) {
+          <li style="background: var(--color-fondo-pantalla); padding: 15px; border-left: 5px solid var(--color-azul-medio); margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+            <strong style="color: var(--color-azul-oscuro); font-size: 16px;">{{ provincia.provinciaNombre }}</strong> 
+            
+            <!-- Botón Eliminar -->
+            <button (click)="eliminarProvincia(provincia.provinciaId)" style="background: var(--color-naranja-teja); color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 12px;">Eliminar</button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>
