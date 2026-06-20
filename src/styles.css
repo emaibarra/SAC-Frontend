@@ -1,0 +1,20 @@
+/* Definición de la Paleta de Colores Global - SAC */
+:root {
+  --color-azul-oscuro: #2A2B53;
+  --color-azul-medio: #284A86;
+  --color-naranja-claro: #EE922F;
+  --color-naranja-teja: #AC593E;
+  --color-gris: #97999B;
+  
+  /* Tonos extra para fondos basados en la paleta */
+  --color-fondo-pantalla: #F8F9FA;
+  --color-fondo-panel: #FFFFFF;
+}
+
+body {
+  background-color: var(--color-fondo-pantalla);
+  color: var(--color-azul-oscuro);
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}/* You can add global styles to this file, and also import other style files */

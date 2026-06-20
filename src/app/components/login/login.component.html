@@ -1,0 +1,28 @@
+
+  <div style="height: 100vh; display: flex; align-items: center; justify-content: center; background-color: var(--color-fondo-pantalla); font-family: Arial, sans-serif;">
+  
+  <div style="background: var(--color-fondo-panel); padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(42, 43, 83, 0.15); width: 100%; max-width: 400px; text-align: center;">
+    
+    <div style="font-size: 60px; margin-bottom: 10px;">🚴</div>
+    <h2 style="color: var(--color-azul-oscuro); margin-bottom: 5px; text-decoration: underline; text-decoration-color: var(--color-naranja-claro); text-underline-offset: 8px;">Iniciar Sesión</h2>
+    <h4 style="color: var(--color-gris); margin-bottom: 30px; font-weight: normal;">Sistema de Asistencia al Ciclista</h4>
+
+    <form (ngSubmit)="iniciarSesion()" style="display: flex; flex-direction: column; gap: 20px;">
+      
+      <div style="text-align: left;">
+        <label style="color: var(--color-azul-oscuro); font-weight: bold; font-size: 14px; margin-bottom: 8px; display: block;">Ingresá tu usuario</label>
+        <input type="text" name="usuario" [(ngModel)]="credenciales.username" placeholder="ej. tecnico_juan" required style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid var(--color-gris); border-radius: 6px; outline: none;">
+      </div>
+
+      <div style="text-align: left;">
+        <label style="color: var(--color-azul-oscuro); font-weight: bold; font-size: 14px; margin-bottom: 8px; display: block;">Ingresá tu contraseña</label>
+        <input type="password" name="password" [(ngModel)]="credenciales.password" placeholder="********" required style="width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid var(--color-gris); border-radius: 6px; outline: none;">
+      </div>
+
+      <button type="submit" style="width: 100%; padding: 15px; background: var(--color-azul-oscuro); color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 10px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-medio)'" onmouseout="this.style.backgroundColor='var(--color-azul-oscuro)'">
+        Continuar
+      </button>
+
+    </form>
+  </div>
+</div>

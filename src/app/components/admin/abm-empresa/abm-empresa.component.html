@@ -1,0 +1,69 @@
+<div style="padding: 20px; font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto;">
+  
+  <!-- Botón Volver -->
+  <button routerLink="/admin" style="margin-bottom: 20px; padding: 10px 20px; background: var(--color-gris); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+    ⬅ Volver al Dashboard
+  </button>
+
+  <!-- Tarjeta Principal -->
+  <div style="background: var(--color-fondo-panel); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(42, 43, 83, 0.08);">
+    
+    <h3 style="color: var(--color-azul-oscuro); margin-top: 0; border-bottom: 2px solid var(--color-naranja-claro); padding-bottom: 10px;">
+      🏢 Alta y Gestión de Empresas
+    </h3>
+    
+    <!-- Formulario Unificado -->
+    <form (ngSubmit)="guardarEmpresa()" style="margin: 25px 0;">
+       
+       <!-- BLOQUE 1: Datos Comerciales -->
+       <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--color-azul-medio);">
+         <h4 style="margin-top: 0; color: var(--color-azul-oscuro); margin-bottom: 15px;">1. Datos Comerciales</h4>
+         <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+           <input type="text" name="nombre" [(ngModel)]="nuevaEmpresa.empresaNombre" placeholder="Nombre de la Empresa" required style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid var(--color-gris); border-radius: 6px; outline: none;">
+           
+           <input type="text" name="telefono" [(ngModel)]="nuevaEmpresa.empresaTelefono" placeholder="Teléfono" required style="flex: 1; min-width: 150px; padding: 12px; border: 1px solid var(--color-gris); border-radius: 6px; outline: none;">
+           
+           <input type="text" name="cuil" [(ngModel)]="nuevaEmpresa.empresaCUIL" placeholder="CUIL" required style="flex: 1; min-width: 150px; padding: 12px; border: 1px solid var(--color-gris); border-radius: 6px; outline: none;">
+
+           <input type="text" name="direccion" [(ngModel)]="nuevaEmpresa.empresaDireccion" placeholder="Dirección completa" required style="flex: 1; min-width: 100%; padding: 12px; border: 1px solid var(--color-gris); border-radius: 6px; outline: none;">
+         </div>
+       </div>
+
+       <!-- BLOQUE 2: Datos de Acceso al Sistema -->
+       <div style="background: #fff3e0; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--color-naranja-claro);">
+        <h4 style="margin-top: 0; color: var(--color-naranja-teja); margin-bottom: 15px;">2. Credenciales de Acceso (Usuario)</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+          <input type="text" name="username" [(ngModel)]="nuevaEmpresa.username" placeholder="Nombre de Usuario (ej. empresa_sur)" required style="flex: 1; min-width: 200px; padding: 12px; border: 1px solid var(--color-gris); border-radius: 6px; outline: none;">
+          
+          <input type="password" name="password" [(ngModel)]="nuevaEmpresa.password" placeholder="Contraseña de la empresa" required style="flex: 1; min-width: 200px; padding: 12px; border: 1px solid var(--color-gris); border-radius: 6px; outline: none;">
+        </div>
+      </div>
+
+       <!-- Botón de Acción -->
+       <button type="submit" style="width: 100%; padding: 15px; background: var(--color-naranja-claro); color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s; font-size: 16px;" onmouseover="this.style.backgroundColor='var(--color-naranja-teja)'" onmouseout="this.style.backgroundColor='var(--color-naranja-claro)'">
+         Registrar Empresa y Crear Usuario
+       </button>
+    </form>
+
+    <h4 style="color: var(--color-azul-medio); margin-top: 40px;">Empresas Registradas</h4>
+    
+    <!-- Lista Dinámica -->
+    @if (empresas.length === 0) {
+      <p style="color: var(--color-gris); font-style: italic; text-align: center; padding: 20px;">No hay empresas cargadas en la base de datos...</p>
+    } @else {
+      <ul style="list-style-type: none; padding: 0; margin: 0;">
+        @for (empresa of empresas; track empresa.empresaId) {
+          <li style="background: var(--color-fondo-pantalla); padding: 15px; border-left: 5px solid var(--color-azul-medio); margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="color: var(--color-azul-oscuro); display: block; font-size: 16px;">{{ empresa.empresaNombre }}</strong> 
+              <span style="color: var(--color-gris); font-size: 13px;">
+                📍 {{ empresa.empresaDireccion }} | 📞 {{ empresa.empresaTelefono }} | 🧑‍💻 Usuario: {{ empresa.usuario?.username || 'Sin usuario' }}
+              </span>
+            </div>
+            <button style="background: var(--color-naranja-teja); color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 12px;">Eliminar</button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>
