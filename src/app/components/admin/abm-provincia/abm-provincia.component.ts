@@ -9,7 +9,7 @@ import { ProvinciaService } from '../../../services/provincia.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './abm-provincia.component.html',
-  styleUrl: './abm-provincia.component.css'
+  styleUrl: './abm-provincia.css'
 })
 export class AbmProvinciaComponent implements OnInit {
 

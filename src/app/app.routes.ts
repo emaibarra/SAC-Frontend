@@ -8,6 +8,7 @@ import { AbmProvinciaComponent } from './components/admin/abm-provincia/abm-prov
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 
 import { roleGuard } from './services/role-guard';
+import { GerenteDashboardComponent } from './components/gerente/gerente-dashboard/gerente-dashboard.component';
 
 export const routes: Routes = [
   // Ruta pública
@@ -28,6 +29,9 @@ export const routes: Routes = [
     canActivate: [roleGuard],
     data: { rolEsperado: 'ADMINISTRADOR' } 
   },
+
+  // <-- Agregamos la ruta del gerente/empresa
+  { path: 'gerente/dashboard', component: GerenteDashboardComponent },
 
   // Redirecciones por defecto
   { path: '', redirectTo: '/login', pathMatch: 'full' },
