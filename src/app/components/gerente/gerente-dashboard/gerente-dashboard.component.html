@@ -1,38 +1,35 @@
-<div class="dashboard-container" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #f3f4f6;">
+<div style="max-width: 500px; margin: 50px auto; background: var(--color-fondo-panel); padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(42, 43, 83, 0.1);">
   
-  <div class="card" style="background-color: #e5e7eb; border-radius: 8px; padding: 40px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+  <h2 style="color: var(--color-azul-oscuro); margin-bottom: 5px;">¡Bienvenido de vuelta!</h2>
+  
+  <div style="font-size: 60px; margin: 10px 0;">🚴</div>
+  <h3 style="color: var(--color-naranja-claro); font-style: italic; margin-bottom: 30px; letter-spacing: 2px;">SAC</h3>
+
+  <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
     
-    <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #111827;">¡Bienvenido de vuelta!</h2>
+    <button routerLink="/gerente/tecnicos" style="width: 80%; padding: 15px; background: var(--color-azul-medio); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-oscuro)'" onmouseout="this.style.backgroundColor='var(--color-azul-medio)'">
+      Administrar Técnicos
+    </button>
     
-    <div style="font-size: 50px; margin-bottom: 10px;">🚴‍♂️</div>
-    <h3 style="font-size: 20px; font-weight: bold; font-style: italic; margin-bottom: 30px; color: #111827;">SAC</h3>
+    <button routerLink="/gerente/zonas" style="width: 80%; padding: 15px; background: var(--color-azul-medio); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-oscuro)'" onmouseout="this.style.backgroundColor='var(--color-azul-medio)'">
+      Agregar zona de trabajo
+    </button>
+    
+    <button routerLink="/gerente/problemas" style="width: 80%; padding: 15px; background: var(--color-azul-medio); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-oscuro)'" onmouseout="this.style.backgroundColor='var(--color-azul-medio)'">
+      Administrar Problemas
+    </button>
+    
+    <button routerLink="/gerente/precios" style="width: 80%; padding: 15px; background: var(--color-azul-medio); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-oscuro)'" onmouseout="this.style.backgroundColor='var(--color-azul-medio)'">
+      Administrar Lista de precios
+    </button>
 
-    <div style="display: flex; flex-direction: column; gap: 15px;">
-      
-      <button style="background-color: #000000; color: #ffffff; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
-        Administrar Técnicos
-      </button>
+    <button routerLink="/gerente/reporte-zonas" style="width: 80%; padding: 15px; background: var(--color-azul-medio); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-oscuro)'" onmouseout="this.style.backgroundColor='var(--color-azul-medio)'">
+      Generar Reporte por Zona
+    </button>
 
-      <button style="background-color: #000000; color: #ffffff; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
-        Agregar zona de trabajo
-      </button>
+    <button routerLink="/gerente/reporte-problemas" style="width: 80%; padding: 15px; background: var(--color-azul-medio); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-oscuro)'" onmouseout="this.style.backgroundColor='var(--color-azul-medio)'">
+      Generar Reporte por Problema
+    </button>
 
-      <button style="background-color: #000000; color: #ffffff; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
-        Administrar Problemas
-      </button>
-
-      <button style="background-color: #000000; color: #ffffff; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
-        Administrar Lista de precios
-      </button>
-
-      <button style="background-color: #000000; color: #ffffff; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
-        Generar Reporte por Zona
-      </button>
-
-      <button style="background-color: #000000; color: #ffffff; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
-        Generar Reporte por Problema
-      </button>
-
-    </div>
   </div>
 </div>
