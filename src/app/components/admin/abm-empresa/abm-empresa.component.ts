@@ -52,4 +52,18 @@ export class AbmEmpresaComponent implements OnInit {
       }
     });
   }
+  eliminarEmpresa(id: number): void {
+    if (confirm('¿Estás totalmente seguro de eliminar esta empresa? (Se eliminará también su usuario de acceso)')) {
+      this.empresaService.eliminarEmpresa(id).subscribe({
+        next: (res: any) => {
+          alert('Empresa eliminada correctamente.');
+          this.cargarEmpresas(); // Recargamos la lista
+        },
+        error: (err: any) => {
+          console.error('Error al eliminar', err);
+          alert('Hubo un error al eliminar. Verificá la consola.');
+        }
+      });
+    }
+  }
 }
