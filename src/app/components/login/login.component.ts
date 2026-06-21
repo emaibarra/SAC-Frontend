@@ -30,7 +30,11 @@ export class LoginComponent {
         // Guardamos las credenciales
         localStorage.setItem('token', respuesta.token);
         localStorage.setItem('rol', respuesta.rol); 
-
+// NUEVO: Guardamos los datos del usuario para poder usarlos en los Dashboards
+        localStorage.setItem('usuario', JSON.stringify({ 
+          username: respuesta.username, 
+          empresaId: respuesta.empresaId 
+        }));
         const rolAsignado = respuesta.rol.toUpperCase(); // Aseguramos que esté en mayúsculas por si acaso
 
         if (rolAsignado === 'ADMINISTRADOR') {

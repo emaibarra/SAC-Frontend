@@ -24,26 +24,22 @@
        </button>
     </form>
 
-    <h4 style="color: var(--color-azul-medio, #1976d2); margin-top: 30px;">Etapas Registradas</h4>
-    
-    <p *ngIf="estados.length === 0" style="color: var(--color-gris, #6c757d); font-style: italic; text-align: center; padding: 20px;">
-      No hay estados cargados...
-    </p>
-
-    <ul *ngIf="estados.length > 0" style="list-style-type: none; padding: 0; margin: 0;">
-      <li *ngFor="let estado of estados" style="background: var(--color-fondo-pantalla, #f4f6f9); padding: 15px; border-left: 5px solid var(--color-naranja-teja, #e65100); margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
-        
-        <div>
-          <strong style="color: var(--color-azul-oscuro, #1a237e); font-size: 16px; display: block;">{{ estado.estadoNombre }}</strong> 
-          <span style="font-size: 13px; color: #555;">{{ estado.estadoDescripcion }}</span>
-        </div>
-        
-        <button (click)="eliminarEstado(estado.estadoId)" style="background: var(--color-naranja-teja, #e65100); color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 12px; height: fit-content;">
-          Eliminar
-        </button>
-        
-      </li>
-    </ul>
-    
+    <h4 style="color: var(--color-azul-medio, #1976d2); margin-top: 30px;">Estados Registrados</h4>
+    <!-- Lista Dinámica -->
+    @if (estados.length === 0) {
+      <p style="color: var(--color-gris); font-style: italic; text-align: center; padding: 20px;">No hay estados cargados en la base de datos...</p>
+    } @else {
+      <ul style="list-style-type: none; padding: 0; margin: 0;">
+        @for (estado of estados; track estado.estadoId) {
+          <li style="background: var(--color-fondo-pantalla); padding: 15px; border-left: 5px solid var(--color-azul-medio); margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="color: var(--color-azul-oscuro); display: block; font-size: 16px;">{{ estado.estadoNombre }}</strong> 
+                <span style="color: var(--color-gris); font-size: 13px;">{{ estado.estadoDescripcion }}</span>
+            </div>
+            <button (click)="eliminarEstado(estado.estadoId)" style="background: var(--color-naranja-teja); color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 12px;">Eliminar</button>
+          </li>
+        }
+      </ul>
+    }
   </div>
 </div>

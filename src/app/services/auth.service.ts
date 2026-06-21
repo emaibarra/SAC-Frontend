@@ -38,5 +38,17 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('rol'); // NUEVO: Limpiamos el rol al salir
   }
-  
+  // NUEVO MÉTODO: Obtiene los datos del usuario logueado
+  getUsuarioActual(): any {
+    // 1. Intentamos leer los datos completos del usuario guardados en el navegador
+    const usuarioString = localStorage.getItem('usuario');
+    
+    if (usuarioString) {
+      // 2. Si existe, lo convertimos de texto a un objeto de JavaScript y lo devolvemos
+      return JSON.parse(usuarioString);
+    }
+    
+    // 3. Si no hay nada guardado (no está logueado), devolvemos null
+    return null;
+  }
 }

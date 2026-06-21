@@ -4,7 +4,8 @@ import { AuthService } from '../../../services/auth.service'; // Para obtener lo
 
 @Component({
   selector: 'app-gerente-tecnicos',
-  templateUrl: './gerente-tecnicos.component.html'
+  templateUrl: './gerente-tecnicos.component.html',
+  styleUrls: ['./gerente-tecnicos.component.css']
 })
 export class GerenteTecnicosComponent implements OnInit {
   
