@@ -1,0 +1,40 @@
+<div style="padding: 20px; font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto;">
+  <button routerLink="/gerente/dashboard" style="margin-bottom: 20px; padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">⬅ Volver al Dashboard</button>
+
+  <div style="background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(42, 43, 83, 0.08);">
+    <h3 style="color: #2b4b80; margin-top: 0; border-bottom: 2px solid #f08a4b; padding-bottom: 10px;">🗺️ Agregar Zona de Trabajo para la Empresa</h3>
+    
+    <form (ngSubmit)="guardarZonaEmpresa()" style="margin: 25px 0;">
+       <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+         <input type="text" name="nombrePersonalizado" [(ngModel)]="nuevaZonaEmpresa.zonaEmpresaNombre" placeholder="Nombre personalizado (Ej. Zona Sur Mendoza)" required style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid #ccc; border-radius: 6px;">
+         
+         <select name="zonaGlobal" [(ngModel)]="nuevaZonaEmpresa.zona.zonaId" required style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; background: white;">
+           <option [ngValue]="null" disabled selected>Selecciona una Zona Oficial (creada por Admin)...</option>
+           <option *ngFor="let zg of zonasGlobales" [ngValue]="zg.zonaId">{{ zg.zonaNombre }} ({{ zg.provincia?.provinciaNombre }})</option>
+         </select>
+       </div>
+
+       <button type="submit" [disabled]="!nuevaZonaEmpresa.zona.zonaId || !nuevaZonaEmpresa.zonaEmpresaNombre" style="width: 100%; margin-top: 20px; padding: 15px; background: #2b4b80; color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer;">
+         Vincular Zona a mi Empresa
+       </button>
+    </form>
+
+    <h4 style="color: #2b4b80; margin-top: 40px;">Zonas donde opera tu Empresa</h4>
+    
+    @if (misZonasEmpresa.length === 0) {
+      <p style="color: #6c757d; font-style: italic; text-align: center;">No tienes zonas asignadas aún...</p>
+    } @else {
+      <ul style="list-style-type: none; padding: 0; margin: 0;">
+        @for (ze of misZonasEmpresa; track ze.zonaEmpresaId) {
+          <li style="background: #f4f6f9; padding: 15px; border-left: 5px solid #2b4b80; margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="color: #1a237e; display: block; font-size: 16px;">{{ ze.zonaEmpresaNombre }}</strong> 
+              <span style="color: #6c757d; font-size: 13px;">🗺️ Región Oficial: {{ ze.zona?.zonaNombre }}</span>
+            </div>
+            <button (click)="eliminarZonaEmpresa(ze.zonaEmpresaId)" style="background: #dc3545; color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer;">Eliminar</button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

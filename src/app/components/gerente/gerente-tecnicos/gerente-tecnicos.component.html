@@ -19,6 +19,14 @@
        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #2b4b80;">
          <h4 style="margin-top: 0; color: #2b4b80; margin-bottom: 15px;">1. Datos Personales del Técnico</h4>
          <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+          
+           <!-- NUEVO: Selector de Tipo de DNI -->
+           <select name="tipoDni" [(ngModel)]="nuevoTecnico.tipoDniId" required style="flex: 1; min-width: 120px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none; background: white;">
+             <option [ngValue]="null" disabled selected>Tipo Doc...</option>
+             @for (tipo of tiposDni; track tipo.tipodniId) {
+               <option [value]="tipo.tipodniId">{{ tipo.tipodniNombre }}</option>
+             }
+           </select>
            <input type="text" name="nombre" [(ngModel)]="nuevoTecnico.tecnicoNombre" placeholder="Nombre completo" required style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none;">
            
            <input type="number" name="dni" [(ngModel)]="nuevoTecnico.tecnicoDNI" placeholder="DNI" required style="flex: 1; min-width: 150px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none;">
@@ -30,12 +38,17 @@
            <input type="number" name="cbu" [(ngModel)]="nuevoTecnico.tecnicoCBU" placeholder="CBU / Cuenta Bancaria" required style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none;">
          </div>
          <div class="form-group">
-  <label>Zona de Trabajo:</label>
+   <div class="form-group" style="margin-top: 15px; width: 100%;">
+  <label style="display: block; margin-bottom: 5px; color: #2b4b80; font-weight: bold;">Zona de Trabajo:</label>
   <select [(ngModel)]="nuevoTecnico.zonaEmpresaId" name="zonaEmpresaId" class="form-control" required>
-    <option *ngFor="let zona of zonasEmpresa" [value]="zona.zonaEmpresaId">
+  <option [ngValue]="null" disabled selected>Selecciona la Zona del Técnico...</option>
+  @for (zona of zonasEmpresa; track zona.zonaEmpresaId) {
+    <option [value]="zona.zonaEmpresaId">
       {{ zona.zonaEmpresaNombre }}
     </option>
-  </select>
+  }
+</select>
+</div>
 </div>
        </div>
 

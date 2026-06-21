@@ -12,7 +12,8 @@ import { DashboardTecnicoComponent } from './components/tecnico/dashboard-tecnic
 import { roleGuard } from './services/role-guard';
 import { DashboardGerenteComponent } from './components/gerente/gerente-dashboard/gerente-dashboard.component';
 import { GerenteTecnicosComponent } from './components/gerente/gerente-tecnicos/gerente-tecnicos.component';
-
+import { GerenteZonasComponent } from './components/gerente/gerente-zonas/gerente-zonas';
+import { AbmTipoDniComponent } from './components/admin/abm-tipo-dni/abm-tipo-dni';
 export const routes: Routes = [
   // Ruta pública
   { path: 'login', component: LoginComponent },
@@ -58,6 +59,13 @@ export const routes: Routes = [
     canActivate: [roleGuard],
     data: { rolEsperado: 'TECNICO' } // Asumiendo que crearás este rol
   },
+  { 
+    path: 'gerente/zonas', 
+    component: GerenteZonasComponent 
+    // canActivate: [RoleGuard], // Agrega esto si tienes el guard configurado
+    // data: { expectedRole: 'GERENTE' }
+  },
+  { path: 'admin/tipos-dni', component: AbmTipoDniComponent},
   // Redirecciones por defecto
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }

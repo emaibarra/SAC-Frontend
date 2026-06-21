@@ -1,1 +1,32 @@
-<p>abm-tipo-dni works!</p>
+<div style="padding: 20px; font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
+  <button routerLink="/admin/admin-dashboard" style="margin-bottom: 20px; padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+    ⬅ Volver al Dashboard
+  </button>
+
+  <div style="background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(42, 43, 83, 0.08);">
+    <h3 style="color: #1a237e; margin-top: 0; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">
+      🪪 Gestión de Tipos de Documento
+    </h3>
+    
+    <form (ngSubmit)="guardarTipoDni()" style="margin: 25px 0; display: flex; gap: 15px;">
+       <input type="text" name="nombre" [(ngModel)]="nuevaTipoDni.tipodniNombre" placeholder="Ej. DNI, Pasaporte, CUIL" required style="flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none;">
+       <button type="submit" [disabled]="!nuevaTipoDni.tipodniNombre" style="padding: 12px 25px; background: #ff9800; color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer;">
+         Guardar
+       </button>
+    </form>
+
+    <h4 style="color: #1976d2; margin-top: 30px;">Tipos Registrados</h4>
+    @if (tiposDni.length === 0) {
+      <p style="color: #6c757d; font-style: italic; text-align: center;">No hay tipos de documento cargados...</p>
+    } @else {
+      <ul style="list-style-type: none; padding: 0; margin: 0;">
+        @for (tipo of tiposDni; track tipo.tipodniId) {
+          <li style="background: #f4f6f9; padding: 15px; border-left: 5px solid #1976d2; margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+            <strong style="color: #1a237e;">{{ tipo.tipodniNombre }}</strong> 
+            <button (click)="eliminarTipoDni(tipo.tipodniId)" style="background: #e65100; color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 12px;">Eliminar</button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>
