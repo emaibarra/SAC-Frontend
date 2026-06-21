@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TecnicoService } from '../../../services/tecnico.service';
 import { AuthService } from '../../../services/auth.service';
-import { ZonaService } from '../../../services/zona.service';
+
 @Component({
   selector: 'app-gerente-tecnicos',
   standalone: true,
@@ -14,7 +14,6 @@ import { ZonaService } from '../../../services/zona.service';
 export class GerenteTecnicosComponent implements OnInit {
   
   tecnicos: any[] = [];
-  zonasEmpresa: any[] = []; // Nueva lista para el select
   
   nuevoTecnico = {
     tecnicoNombre: '',
@@ -25,29 +24,22 @@ export class GerenteTecnicosComponent implements OnInit {
     usuarioNombre: '',      
     usuarioPassword: '',    
     empresaId: null as number | null,
-    zonaEmpresaId: null as number | null // Nuevo campo para el formulario
+    zonaEmpresaId: null as number | null
   };
 
   private tecnicoService = inject(TecnicoService);
   private authService = inject(AuthService);
- private zonaService = inject(ZonaService); // Inyectar servicio de zonas
 
   ngOnInit(): void {
     const usuarioLogueado = this.authService.getUsuarioActual(); 
     if (usuarioLogueado && usuarioLogueado.empresaId) {
       this.nuevoTecnico.empresaId = usuarioLogueado.empresaId;
       this.cargarTecnicos();
-       this.cargarZonas(); // Cargar las zonas al iniciar
     } else {
       alert('Error: No se pudo identificar tu empresa. Inicia sesión nuevamente.');
     }
   }
-cargarZonas(): void {
-    // Ajusta este método según tu API de Zonas
-    this.zonaService.getZonas().subscribe(data => {
-      this.zonasEmpresa = data;
-    });
-  }
+
   cargarTecnicos(): void {
     // Obtenemos todos los técnicos y filtramos para mostrar solo los de la empresa actual
     this.tecnicoService.getTecnicos().subscribe({
@@ -59,23 +51,40 @@ cargarZonas(): void {
   }
 
   guardarTecnico(): void {
-    if (!this.nuevoTecnico.empresaId) {
-      alert('Error: No se pudo identificar la empresa del gerente.');
+    if (!this.nuevoTecnico.empresaId || !this.nuevoTecnico.zonaEmpresaId) {
+      alert('Error: Asegúrate de completar todos los campos, incluyendo la Zona.');
       return;
     }
 
-    this.tecnicoService.crearTecnico(this.nuevoTecnico).subscribe({
+    // 1. Armamos el payload con la estructura EXACTA que espera TecnicoRegistroDTO en Java
+    const payload = {
+      username: this.nuevoTecnico.usuarioNombre,
+      password: this.nuevoTecnico.usuarioPassword,
+      rolId: 3, // IMPORTANTE: Asegúrate de que el ID 3 corresponda al Rol "TECNICO" en tu base de datos
+      empresaId: this.nuevoTecnico.empresaId,
+      zonaEmpresaId: this.nuevoTecnico.zonaEmpresaId,
+      tecnico: {
+        tecnicoNombre: this.nuevoTecnico.tecnicoNombre,
+        tecnicoDNI: this.nuevoTecnico.tecnicoDNI,
+        tecnicoCBU: this.nuevoTecnico.tecnicoCBU,
+        tecnicoEmail: this.nuevoTecnico.tecnicoEmail,
+        tecnicoDireccion: this.nuevoTecnico.tecnicoDireccion
+      }
+    };
+
+    // 2. Enviamos el payload estructurado, NO this.nuevoTecnico directamente
+    this.tecnicoService.crearTecnico(payload).subscribe({
       next: () => {
         alert('Técnico guardado exitosamente');
         this.cargarTecnicos(); // Recargamos la lista
         
-        // Reseteamos el formulario manteniendo el ID de la empresa
+        // 3. Reseteamos el formulario correctamente
         this.nuevoTecnico = { 
           tecnicoNombre: '', tecnicoDNI: null, tecnicoCBU: null, 
           tecnicoEmail: '', tecnicoDireccion: '', 
           usuarioNombre: '', usuarioPassword: '', 
           empresaId: this.nuevoTecnico.empresaId,
-         zonaEmpresaId : { zonaEmpresaId: this.nuevoTecnico.zonaEmpresaId },
+          zonaEmpresaId: null // Se resetea correctamente a null
         };
       },
       error: (err: any) => {
