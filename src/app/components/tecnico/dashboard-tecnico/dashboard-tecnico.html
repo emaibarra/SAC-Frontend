@@ -1,0 +1,63 @@
+<div style="background: var(--color-fondo-pantalla, #f4f6f9); min-height: 100vh; padding: 15px; font-family: Arial, sans-serif;">
+  
+  <!-- Encabezado Superior -->
+  <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-azul-oscuro, #1a237e); color: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+    <div>
+      <h3 style="margin: 0; font-size: 18px;">📱 Panel de Unidad</h3>
+      <span style="font-size: 12px; color: #b0bec5;">Móvil Operativo</span>
+    </div>
+    <button (click)="cerrarSesion()" style="background: #dc3545; color: white; border: none; border-radius: 6px; padding: 8px 12px; cursor: pointer; font-weight: bold;">
+      Salir
+    </button>
+  </div>
+
+  <!-- Tarjeta de Estado del Técnico -->
+  <div style="background: white; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <h4 style="margin-top: 0; color: #555;">Mi Estado Actual</h4>
+    
+    <!-- Selector de Estado -->
+    <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
+      <button (click)="cambiarEstado('DISPONIBLE')" 
+              [style.background]="estadoActual === 'DISPONIBLE' ? '#28a745' : '#e9ecef'"
+              [style.color]="estadoActual === 'DISPONIBLE' ? 'white' : '#495057'"
+              style="flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s;">
+        🟢 DISPONIBLE
+      </button>
+      <button (click)="cambiarEstado('OCUPADO')" 
+              [style.background]="estadoActual === 'OCUPADO' ? '#dc3545' : '#e9ecef'"
+              [style.color]="estadoActual === 'OCUPADO' ? 'white' : '#495057'"
+              style="flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s;">
+        🔴 OCUPADO
+      </button>
+    </div>
+  </div>
+
+  <!-- Alerta de Asistencia Asignada (Simulada para el futuro) -->
+  <div *ngIf="asistenciaActiva" style="background: #fff3e0; border-left: 5px solid var(--color-naranja-teja, #e65100); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(230, 81, 0, 0.15);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+      <h3 style="margin: 0; color: var(--color-naranja-teja, #e65100);">🚨 ¡Nueva Solicitud!</h3>
+      <span style="background: #ffcc80; color: #d84315; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold;">Urgente</span>
+    </div>
+    
+    <p style="margin: 5px 0; color: #424242;"><strong>Ciclista:</strong> Martín Pérez</p>
+    <p style="margin: 5px 0; color: #424242;"><strong>Ubicación:</strong> Ruta 82, Luján de Cuyo</p>
+    <p style="margin: 5px 0; color: #424242;"><strong>Problema:</strong> Cadena rota, sin herramientas.</p>
+
+    <div style="margin-top: 20px; display: flex; gap: 10px;">
+      <button style="flex: 1; background: var(--color-azul-medio, #1976d2); color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+        📍 Ver en Mapa
+      </button>
+      <button (click)="completarAsistencia()" style="flex: 1; background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+        ✅ Finalizar
+      </button>
+    </div>
+  </div>
+
+  <!-- Mensaje de espera -->
+  <div *ngIf="!asistenciaActiva && estadoActual === 'DISPONIBLE'" style="text-align: center; padding: 40px 20px; color: #78909c;">
+    <h1 style="font-size: 40px; margin: 0;">📡</h1>
+    <p style="font-size: 16px; font-weight: bold;">Esperando solicitudes de asistencia...</p>
+    <p style="font-size: 13px;">Mantén la app abierta para recibir alertas en tu zona.</p>
+  </div>
+
+</div>
