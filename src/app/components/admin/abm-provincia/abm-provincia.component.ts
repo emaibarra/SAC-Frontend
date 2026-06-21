@@ -8,8 +8,8 @@ import { ProvinciaService } from '../../../services/provincia.service';
   selector: 'app-abm-provincia',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: './abm-provincia.html',
-  styleUrl: './abm-provincia.component.css'
+  templateUrl: './abm-provincia.component.html',
+  styleUrl: './abm-provincia.css'
 })
 export class AbmProvinciaComponent implements OnInit {
 

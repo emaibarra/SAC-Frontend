@@ -5,6 +5,7 @@ import { LoginComponent } from './components/login/login.component';
 import { AbmEmpresaComponent } from './components/admin/abm-empresa/abm-empresa.component';
 import { AbmProvinciaComponent } from './components/admin/abm-provincia/abm-provincia.component';
 import { AbmZonaComponent } from './components/admin/abm-zona/abm-zona';
+import { AbmEstadoSolicitudComponent } from './components/admin/abm-estado-solicitud/abm-estado-solicitud';
 // Si tienes un componente principal para el dashboard, descomenta y ajusta esta línea:
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { DashboardTecnicoComponent } from './components/tecnico/dashboard-tecnico/dashboard-tecnico';
@@ -39,6 +40,14 @@ export const routes: Routes = [
   canActivate: [roleGuard],
   data: { rolEsperado: 'ADMINISTRADOR' } 
 },
+
+  // NUEVA RUTA PARA ESTADOS
+  { 
+    path: 'admin/estados', 
+    component: AbmEstadoSolicitudComponent,
+    canActivate: [roleGuard],
+    data: { rolEsperado: 'ADMINISTRADOR' } 
+  },
 // --- RUTAS DEL TÉCNICO---
   { 
     path: 'tecnico', 

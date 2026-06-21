@@ -1,0 +1,49 @@
+<div style="padding: 20px; font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto;">
+  
+  <button routerLink="/admin" style="margin-bottom: 20px; padding: 10px 20px; background: var(--color-gris, #6c757d); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s;">
+    ⬅ Volver al Dashboard
+  </button>
+
+  <div style="background: var(--color-fondo-panel, #ffffff); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(42, 43, 83, 0.08);">
+    
+    <h3 style="color: var(--color-azul-oscuro, #1a237e); margin-top: 0; border-bottom: 2px solid var(--color-naranja-claro, #ff9800); padding-bottom: 10px;">
+      🚦 Estados de Asistencia
+    </h3>
+    <p style="color: var(--color-gris, #6c757d); font-size: 14px;">Administra las diferentes etapas por las que pasa una solicitud de auxilio.</p>
+    
+    <form (ngSubmit)="guardarEstado()" style="margin: 25px 0; display: flex; flex-direction: column; gap: 15px;">
+       
+       <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+         <input type="text" name="nombre" [(ngModel)]="nuevoEstado.estadoNombre" placeholder="Nombre (Ej. EN VIAJE, RESUELTA)" required style="flex: 1; min-width: 200px; padding: 12px; border: 1px solid var(--color-gris, #ccc); border-radius: 6px; outline: none; text-transform: uppercase;">
+         
+         <input type="text" name="descripcion" [(ngModel)]="nuevoEstado.estadoDescripcion" placeholder="Descripción breve" required style="flex: 2; min-width: 250px; padding: 12px; border: 1px solid var(--color-gris, #ccc); border-radius: 6px; outline: none;">
+       </div>
+
+       <button type="submit" [disabled]="!nuevoEstado.estadoNombre" style="padding: 12px 25px; background: var(--color-naranja-claro, #ff9800); color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s; align-self: flex-start;">
+         Registrar Estado
+       </button>
+    </form>
+
+    <h4 style="color: var(--color-azul-medio, #1976d2); margin-top: 30px;">Etapas Registradas</h4>
+    
+    <p *ngIf="estados.length === 0" style="color: var(--color-gris, #6c757d); font-style: italic; text-align: center; padding: 20px;">
+      No hay estados cargados...
+    </p>
+
+    <ul *ngIf="estados.length > 0" style="list-style-type: none; padding: 0; margin: 0;">
+      <li *ngFor="let estado of estados" style="background: var(--color-fondo-pantalla, #f4f6f9); padding: 15px; border-left: 5px solid var(--color-naranja-teja, #e65100); margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+        
+        <div>
+          <strong style="color: var(--color-azul-oscuro, #1a237e); font-size: 16px; display: block;">{{ estado.estadoNombre }}</strong> 
+          <span style="font-size: 13px; color: #555;">{{ estado.estadoDescripcion }}</span>
+        </div>
+        
+        <button (click)="eliminarEstado(estado.estadoId)" style="background: var(--color-naranja-teja, #e65100); color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 12px; height: fit-content;">
+          Eliminar
+        </button>
+        
+      </li>
+    </ul>
+    
+  </div>
+</div>
