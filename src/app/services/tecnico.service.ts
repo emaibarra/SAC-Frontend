@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -7,19 +7,30 @@ import { Observable } from 'rxjs';
 })
 export class TecnicoService {
 
-  // Esta es la URL de tu backend en Spring Boot.
-  // Asegúrate de que el puerto coincida con el que usa tu API (usualmente 8080)
+  private http = inject(HttpClient);
+  // Asegúrate de que esta URL coincida con el controlador en tu backend (Spring Boot)
   private apiUrl = 'http://localhost:8080/api/tecnicos';
 
-  constructor(private http: HttpClient) { }
+  // Método privado para adjuntar el token de seguridad a las peticiones
+  private getHeaders() {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
 
-  /**
-   * Método para enviar el nuevo técnico al backend
-   * @param tecnicoData Los datos del formulario unidos al empresaId
-   * @returns Un Observable con la respuesta del servidor
-   */
-  crearTecnico(tecnicoData: any): Observable<any> {
-    // Realiza una petición POST enviando el JSON al backend
-    return this.http.post(this.apiUrl, tecnicoData);
+  // Obtener la lista de todos los técnicos
+  getTecnicos(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl, { headers: this.getHeaders() });
+  }
+
+  // Crear un nuevo técnico (enviando también sus credenciales de usuario)
+  crearTecnico(tecnico: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, tecnico, { headers: this.getHeaders() });
+  }
+
+  // Eliminar un técnico por su ID
+  eliminarTecnico(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 }

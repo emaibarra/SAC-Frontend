@@ -1,0 +1,79 @@
+<div style="padding: 20px; font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto;">
+  
+  <!-- Botón Volver -->
+  <button routerLink="/gerente/dashboard" style="margin-bottom: 20px; padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+    ⬅ Volver al Dashboard
+  </button>
+
+  <!-- Tarjeta Principal -->
+  <div style="background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(42, 43, 83, 0.08);">
+    
+    <h3 style="color: #2b4b80; margin-top: 0; border-bottom: 2px solid #f08a4b; padding-bottom: 10px;">
+      🧑‍🔧 Alta y Gestión de Técnicos
+    </h3>
+    
+    <!-- Formulario -->
+    <form (ngSubmit)="guardarTecnico()" style="margin: 25px 0;">
+       
+       <!-- BLOQUE 1: Datos Personales -->
+       <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #2b4b80;">
+         <h4 style="margin-top: 0; color: #2b4b80; margin-bottom: 15px;">1. Datos Personales del Técnico</h4>
+         <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+           <input type="text" name="nombre" [(ngModel)]="nuevoTecnico.tecnicoNombre" placeholder="Nombre completo" required style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none;">
+           
+           <input type="number" name="dni" [(ngModel)]="nuevoTecnico.tecnicoDNI" placeholder="DNI" required style="flex: 1; min-width: 150px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none;">
+           
+           <input type="email" name="email" [(ngModel)]="nuevoTecnico.tecnicoEmail" placeholder="Correo Electrónico" required style="flex: 1; min-width: 200px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none;">
+
+           <input type="text" name="direccion" [(ngModel)]="nuevoTecnico.tecnicoDireccion" placeholder="Dirección completa" required style="flex: 1; min-width: 200px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none;">
+           
+           <input type="number" name="cbu" [(ngModel)]="nuevoTecnico.tecnicoCBU" placeholder="CBU / Cuenta Bancaria" required style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none;">
+         </div>
+         <div class="form-group">
+  <label>Zona de Trabajo:</label>
+  <select [(ngModel)]="nuevoTecnico.zonaEmpresaId" name="zonaEmpresaId" class="form-control" required>
+    <option *ngFor="let zona of zonasEmpresa" [value]="zona.zonaEmpresaId">
+      {{ zona.zonaEmpresaNombre }}
+    </option>
+  </select>
+</div>
+       </div>
+
+       <!-- BLOQUE 2: Datos de Acceso -->
+       <div style="background: #fff3e0; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #f08a4b;">
+        <h4 style="margin-top: 0; color: #d84315; margin-bottom: 15px;">2. Credenciales de Acceso (App del Técnico)</h4>
+        <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+          <input type="text" name="username" [(ngModel)]="nuevoTecnico.usuarioNombre" placeholder="Nombre de Usuario (ej. tecnico_juan)" required style="flex: 1; min-width: 200px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none;">
+          
+          <input type="password" name="password" [(ngModel)]="nuevoTecnico.usuarioPassword" placeholder="Contraseña provisoria" required style="flex: 1; min-width: 200px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none;">
+        </div>
+      </div>
+
+       <!-- Botón de Acción -->
+       <button type="submit" [disabled]="!nuevoTecnico.tecnicoNombre || !nuevoTecnico.usuarioNombre || !nuevoTecnico.usuarioPassword" style="width: 100%; padding: 15px; background: #2b4b80; color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s; font-size: 16px;" onmouseover="this.style.backgroundColor='#1a335c'" onmouseout="this.style.backgroundColor='#2b4b80'">
+         Registrar Técnico y Crear Usuario
+       </button>
+    </form>
+
+    <h4 style="color: #2b4b80; margin-top: 40px;">Técnicos de tu Empresa</h4>
+    
+    <!-- Lista Dinámica -->
+    @if (tecnicos.length === 0) {
+      <p style="color: #6c757d; font-style: italic; text-align: center; padding: 20px;">No tienes técnicos registrados aún...</p>
+    } @else {
+      <ul style="list-style-type: none; padding: 0; margin: 0;">
+        @for (tecnico of tecnicos; track tecnico.tecnicoId) {
+          <li style="background: #f4f6f9; padding: 15px; border-left: 5px solid #2b4b80; margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="color: #1a237e; display: block; font-size: 16px;">{{ tecnico.tecnicoNombre }}</strong> 
+              <span style="color: #6c757d; font-size: 13px;">
+                💳 DNI: {{ tecnico.tecnicoDNI }} | 📧 {{ tecnico.tecnicoEmail }} | 🧑‍💻 Usuario: {{ tecnico.usuario?.username || 'Sin usuario' }}
+              </span>
+            </div>
+            <button (click)="eliminarTecnico(tecnico.tecnicoId)" style="background: #dc3545; color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 12px;">Eliminar</button>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

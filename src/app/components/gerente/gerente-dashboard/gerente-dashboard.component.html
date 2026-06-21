@@ -1,38 +1,43 @@
-<div style="max-width: 500px; margin: 50px auto; background: var(--color-fondo-panel); padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(42, 43, 83, 0.1);">
+<div style="padding: 40px 20px; font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; text-align: center;">
   
-  <h2 style="color: var(--color-azul-oscuro); margin-bottom: 5px;">¡Bienvenido de vuelta!</h2>
-  
-  <div style="font-size: 60px; margin: 10px 0;">🚴</div>
-  <h3 style="color: var(--color-naranja-claro); font-style: italic; margin-bottom: 30px; letter-spacing: 2px;">SAC</h3>
-
-  <div style="display: flex; flex-direction: column; gap: 15px; align-items: center;">
+  <!-- Encabezado con título SAC y botón de cerrar sesión discreto -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+    <div style="width: 80px;"></div> <!-- Espaciador para centrar el título -->
     
-    <button routerLink="/gerente/tecnicos" style="width: 80%; padding: 15px; background: var(--color-azul-medio); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-oscuro)'" onmouseout="this.style.backgroundColor='var(--color-azul-medio)'">
+    <h1 style="color: #f08a4b; font-style: italic; font-weight: bold; margin: 0; font-size: 32px; letter-spacing: 2px;">
+      SAC
+    </h1>
+    
+    <button (click)="cerrarSesion()" style="background: transparent; color: #dc3545; border: 1px solid #dc3545; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 12px; font-weight: bold;">
+      Salir
+    </button>
+  </div>
+
+  <!-- Contenedor de Botones (Estilo Flexbox vertical) -->
+  <div style="display: flex; flex-direction: column; gap: 15px;">
+    
+    <button routerLink="/gerente/tecnicos" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
       Administrar Técnicos
     </button>
     
-    <button routerLink="/gerente/zonas" style="width: 80%; padding: 15px; background: var(--color-azul-medio); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-oscuro)'" onmouseout="this.style.backgroundColor='var(--color-azul-medio)'">
+    <button routerLink="/gerente/zonas" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
       Agregar zona de trabajo
     </button>
     
-    <button routerLink="/gerente/problemas" style="width: 80%; padding: 15px; background: var(--color-azul-medio); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-oscuro)'" onmouseout="this.style.backgroundColor='var(--color-azul-medio)'">
+    <button routerLink="/gerente/problemas" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
       Administrar Problemas
     </button>
     
-    <button routerLink="/gerente/precios" style="width: 80%; padding: 15px; background: var(--color-azul-medio); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-oscuro)'" onmouseout="this.style.backgroundColor='var(--color-azul-medio)'">
+    <button routerLink="/gerente/precios" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
       Administrar Lista de precios
     </button>
-
-    <button routerLink="/gerente/reporte-zonas" style="width: 80%; padding: 15px; background: var(--color-azul-medio); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-oscuro)'" onmouseout="this.style.backgroundColor='var(--color-azul-medio)'">
+    
+    <button (click)="generarReporte('Zona')" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
       Generar Reporte por Zona
     </button>
-
-    <button routerLink="/gerente/reporte-problemas" style="width: 80%; padding: 15px; background: var(--color-azul-medio); color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-oscuro)'" onmouseout="this.style.backgroundColor='var(--color-azul-medio)'">
+    
+    <button (click)="generarReporte('Problema')" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
       Generar Reporte por Problema
-    </button>
-
-    <button (click)="cerrarSesion()" style="width: 80%; padding: 15px; background: #e74c3c; color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s; margin-top: 10px;" onmouseover="this.style.backgroundColor='#c0392b'" onmouseout="this.style.backgroundColor='#e74c3c'">
-      Cerrar Sesión
     </button>
 
   </div>

@@ -10,7 +10,7 @@ import { AbmEstadoSolicitudComponent } from './components/admin/abm-estado-solic
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { DashboardTecnicoComponent } from './components/tecnico/dashboard-tecnico/dashboard-tecnico';
 import { roleGuard } from './services/role-guard';
-import { GerenteDashboardComponent } from './components/gerente/gerente-dashboard/gerente-dashboard.component';
+import { DashboardGerenteComponent } from './components/gerente/gerente-dashboard/gerente-dashboard.component';
 import { GerenteTecnicosComponent } from './components/gerente/gerente-tecnicos/gerente-tecnicos.component';
 
 export const routes: Routes = [
@@ -27,6 +27,13 @@ export const routes: Routes = [
     data: { rolEsperado: 'ADMINISTRADOR' } 
   },
   { 
+  path: 'admin/zonas', 
+  component: AbmZonaComponent,
+  canActivate: [roleGuard],
+  data: { rolEsperado: 'ADMINISTRADOR' } 
+},
+
+  { 
     path: 'admin/provincias', 
     component: AbmProvinciaComponent,
     canActivate: [roleGuard],
@@ -34,14 +41,9 @@ export const routes: Routes = [
   },
 
   // <-- Agregamos la ruta del gerente/empresa
-  { path: 'gerente/dashboard', component: GerenteDashboardComponent },
-{ 
-  path: 'admin/zonas', 
-  component: AbmZonaComponent,
-  canActivate: [roleGuard],
-  data: { rolEsperado: 'ADMINISTRADOR' } 
-},
-
+  { path: 'gerente/dashboard', component: DashboardGerenteComponent },
+  //Ruta para gestionar técnicos (solo visible para el gerente)
+{ path: 'gerente/tecnicos', component: GerenteTecnicosComponent },
   // NUEVA RUTA PARA ESTADOS
   { 
     path: 'admin/estados', 

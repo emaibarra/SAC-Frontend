@@ -1,26 +1,44 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
-  selector: 'app-gerente-dashboard',
+  selector: 'app-dashboard-gerente',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './gerente-dashboard.component.html',
-  styleUrls: ['./gerente-dashboard.component.css'] // Si tienes estilos específicos
+  imports: [CommonModule, RouterModule],
+  templateUrl: './gerente-dashboard.component.html'
 })
-export class GerenteDashboardComponent {
+export class DashboardGerenteComponent implements OnInit {
+
+  private router = inject(Router);
+  private authService = inject(AuthService);
   
-  constructor(
-    private authService: AuthService, 
-    private router: Router
-  ) {}
+  usuarioLogueado: any = null;
+
+  ngOnInit(): void {
+    // Recuperamos los datos del usuario logueado (que guardamos en el Login)
+    this.usuarioLogueado = this.authService.getUsuarioActual();
+  }
+
+  // Función de ejemplo para los botones de reportes
+  generarReporte(tipo: string): void {
+    const empresaId = this.usuarioLogueado?.empresaId;
+    if (!empresaId) {
+      alert('Error: No se pudo identificar tu empresa.');
+      return;
+    }
+    
+    // Aquí luego conectaremos con el backend para descargar el PDF/Excel
+    alert(`Próximamente: Generando reporte por ${tipo} para la empresa ID: ${empresaId}`);
+  }
 
   cerrarSesion(): void {
-    // Llama al método de tu servicio que limpia el token o el estado de sesión
-    this.authService.logout(); 
-    // Redirige a la pantalla de inicio de sesión
-    this.router.navigate(['/login']); 
+    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('rol');
+      localStorage.removeItem('usuario');
+      this.router.navigate(['/login']);
+    }
   }
 }
