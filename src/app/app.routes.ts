@@ -11,6 +11,7 @@ import { AdminDashboardComponent } from './components/admin/admin-dashboard/admi
 import { DashboardTecnicoComponent } from './components/tecnico/dashboard-tecnico/dashboard-tecnico';
 import { roleGuard } from './services/role-guard';
 import { GerenteDashboardComponent } from './components/gerente/gerente-dashboard/gerente-dashboard.component';
+import { GerenteTecnicosComponent } from './components/gerente/gerente-tecnicos/gerente-tecnicos.component';
 
 export const routes: Routes = [
   // Ruta pública
