@@ -7,7 +7,7 @@ import { AbmProvinciaComponent } from './components/admin/abm-provincia/abm-prov
 import { AbmZonaComponent } from './components/admin/abm-zona/abm-zona';
 // Si tienes un componente principal para el dashboard, descomenta y ajusta esta línea:
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
-
+import { DashboardTecnicoComponent } from './components/tecnico/dashboard-tecnico/dashboard-tecnico';
 import { roleGuard } from './services/role-guard';
 import { GerenteDashboardComponent } from './components/gerente/gerente-dashboard/gerente-dashboard.component';
 
@@ -39,6 +39,13 @@ export const routes: Routes = [
   canActivate: [roleGuard],
   data: { rolEsperado: 'ADMINISTRADOR' } 
 },
+// --- RUTAS DEL TÉCNICO---
+  { 
+    path: 'tecnico', 
+    component: DashboardTecnicoComponent,
+    canActivate: [roleGuard],
+    data: { rolEsperado: 'TECNICO' } // Asumiendo que crearás este rol
+  },
   // Redirecciones por defecto
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
