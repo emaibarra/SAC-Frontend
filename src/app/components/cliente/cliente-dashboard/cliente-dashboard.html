@@ -1,0 +1,34 @@
+<div style="padding: 40px 20px; font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; text-align: center;">
+  
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+    <div style="width: 80px;"></div> <h1 style="color: #f08a4b; font-style: italic; font-weight: bold; margin: 0; font-size: 32px; letter-spacing: 2px;">
+      SAC
+    </h1>
+    
+    <button (click)="cerrarSesion()" style="background: transparent; color: #dc3545; border: 1px solid #dc3545; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 12px; font-weight: bold;">
+      Salir
+    </button>
+  </div>
+
+  <h3 style="color: #2b4b80; margin-bottom: 30px; font-weight: bold;">¡Bienvenido de vuelta!</h3>
+
+  <div style="display: flex; flex-direction: column; gap: 15px;">
+    
+    <button routerLink="/cliente/solicitar" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+      Solicitar Técnico
+    </button>
+    
+    <button routerLink="/cliente/perfil" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+      Actualizar Información
+    </button>
+    
+    <button routerLink="/cliente/historial" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+      Historial de Solicitudes
+    </button>
+    
+    <button routerLink="/cliente/reclamo" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+      Informar de un problema
+    </button>
+
+  </div>
+</div>
