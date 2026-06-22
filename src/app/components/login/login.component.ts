@@ -43,12 +43,11 @@ export class LoginComponent {
         else if (rolAsignado === 'GERENTE' || rolAsignado === 'EMPRESA') {
           this.router.navigate(['/gerente/dashboard']); // Ruta hacia el dashboard de la empresa
         } 
-        else if (rolAsignado === 'TECNICO') {
-          this.router.navigate(['/tecnico/dashboard']); // Ruta hacia el dashboard del técnico
+       else if (rolAsignado === 'TECNICO') {
+          this.router.navigate(['/tecnico']);
         } 
         else {
-          // Si el rol es "CLIENTE" o cualquier otro que no esté mapeado arriba, lo enviamos al inicio
-          this.router.navigate(['/home']); 
+          alert('Rol desconocido o sin pantalla asignada: ' + rolAsignado);
         }
       },
       error: (error) => {

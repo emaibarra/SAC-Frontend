@@ -16,6 +16,7 @@ import { GerenteZonasComponent } from './components/gerente/gerente-zonas/gerent
 import { AbmTipoDniComponent } from './components/admin/abm-tipo-dni/abm-tipo-dni';
 import { GerenteProblemasComponent } from './components/gerente/gerente-problemas/gerente-problemas';
 import { GerenteListaPreciosComponent } from './components/gerente/gerente-lista-precios/gerente-lista-precios';
+import { GerenteReportesComponent } from './components/gerente/gerente-reportes/gerente-reportes';
 export const routes: Routes = [
   // Ruta pública
   { path: 'login', component: LoginComponent },
@@ -63,15 +64,14 @@ export const routes: Routes = [
   },
   
   {path: 'gerente/problemas', component: GerenteProblemasComponent},
-
+ { path: 'gerente/reportes', component: GerenteReportesComponent },
+ 
 // --- RUTAS DEL TÉCNICO---
   { 
-    path: 'tecnico', 
-    component: DashboardTecnicoComponent,
+    path: 'tecnico', component: DashboardTecnicoComponent,
     canActivate: [roleGuard],
     data: { rolEsperado: 'TECNICO' } // Asumiendo que crearás este rol
   },
-  
   // Redirecciones por defecto
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
