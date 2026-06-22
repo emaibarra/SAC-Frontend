@@ -14,6 +14,7 @@ import { DashboardGerenteComponent } from './components/gerente/gerente-dashboar
 import { GerenteTecnicosComponent } from './components/gerente/gerente-tecnicos/gerente-tecnicos.component';
 import { GerenteZonasComponent } from './components/gerente/gerente-zonas/gerente-zonas';
 import { AbmTipoDniComponent } from './components/admin/abm-tipo-dni/abm-tipo-dni';
+import { ClienteDashboard } from './components/cliente/cliente-dashboard/cliente-dashboard';
 import { GerenteProblemasComponent } from './components/gerente/gerente-problemas/gerente-problemas';
 import { GerenteListaPreciosComponent } from './components/gerente/gerente-lista-precios/gerente-lista-precios';
 import { GerenteReportesComponent } from './components/gerente/gerente-reportes/gerente-reportes';
@@ -36,6 +37,14 @@ export const routes: Routes = [
   canActivate: [roleGuard],
   data: { rolEsperado: 'ADMINISTRADOR' } 
 },
+
+{ 
+    path: 'cliente/dashboard', 
+    component: ClienteDashboard 
+    // Aquí puedes agregar un Guardia (AuthGuard) verificando que el rol sea 'CLIENTE'
+  },
+
+
   { 
     path: 'admin/provincias', 
     component: AbmProvinciaComponent,

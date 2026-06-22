@@ -57,4 +57,62 @@ export class LoginComponent {
       }
     });
   }
+  // ========================================================
+  // 2. NUEVA LÓGICA AGREGADA PARA EL CLIENTE
+  // ========================================================
+  
+  mostrarLoginCliente: boolean = false; // Controla qué pantalla se ve
+  telefonoCliente: string = '';
+
+  irAPantallaCliente(): void {
+    this.mostrarLoginCliente = true;
+    this.errorLogin = ''; // Limpiamos errores al cambiar de pantalla
+  }
+
+  volverAPantallaNormal(): void {
+    this.mostrarLoginCliente = false;
+    this.errorLogin = '';
+  }
+
+  iniciarSesionClienteTelefono(): void {
+    if (!this.telefonoCliente) {
+      this.errorLogin = 'Por favor ingrese un número de teléfono';
+      return;
+    }
+    
+    // Asume que agregaste el método loginCliente en auth.service.ts
+    const payload = { metodo: 'TELEFONO', telefono: this.telefonoCliente };
+    this.authService.loginCliente(payload).subscribe({
+      next: (respuesta) => {
+        localStorage.setItem('token', respuesta.token);
+        localStorage.setItem('rol', respuesta.rol);
+        // Redirigir al dashboard del cliente
+        this.router.navigate(['/cliente/dashboard']);
+      },
+      error: (error) => {
+        console.error('Error de login cliente', error);
+        this.errorLogin = 'Error al iniciar sesión con teléfono';
+      }
+    });
+  }
+
+  iniciarSesionClienteGoogle(): void {
+    // Datos simulados para Google
+    const payload = { 
+      metodo: 'GOOGLE', 
+      email: 'cliente@gmail.com', 
+      nombre: 'Juan Perez' 
+    };
+    this.authService.loginCliente(payload).subscribe({
+      next: (respuesta) => {
+        localStorage.setItem('token', respuesta.token);
+        localStorage.setItem('rol', respuesta.rol);
+        this.router.navigate(['/cliente/dashboard']);
+      },
+      error: (error) => {
+        console.error('Error de login cliente Google', error);
+        this.errorLogin = 'Servicio de Google no disponible';
+      }
+    });
+  }
 }
