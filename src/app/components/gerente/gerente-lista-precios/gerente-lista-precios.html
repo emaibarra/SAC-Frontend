@@ -1,0 +1,60 @@
+<div style="padding: 20px; font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto;">
+  
+  <button routerLink="/gerente/dashboard" style="margin-bottom: 20px; padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+    ⬅ Volver al Dashboard
+  </button>
+
+  <div style="background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(42, 43, 83, 0.08);">
+    
+    <h3 style="color: #2b804f; margin-top: 0; border-bottom: 2px solid #4caf50; padding-bottom: 10px;">
+      💲 Gestión de Lista de Precios
+    </h3>
+    
+    <form (ngSubmit)="guardarLista()" style="margin: 25px 0; background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #2b804f;">
+       <h4 style="margin-top: 0; color: #2b804f; margin-bottom: 15px;">
+         {{ modoEdicion ? '✏️ Editar Tarifa' : '➕ Nueva Tarifa' }}
+       </h4>
+       
+       <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+         <input type="text" name="nombre" [(ngModel)]="listaActual.nombre" placeholder="Nombre del servicio (Ej. Visita técnica, Mantenimiento...)" required style="flex: 2; min-width: 250px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none;">
+         
+         <textarea name="descripcion" [(ngModel)]="listaActual.descripcion" placeholder="Descripción detallada (opcional)" rows="2" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none; resize: vertical;"></textarea>
+        <input type="Float" name="precio" [(ngModel)]="listaActual.precio" placeholder="Precio en $ (Ej. 1500)" required style="flex: 1; min-width: 150px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none;">
+        </div>
+
+       <div style="display: flex; gap: 10px; margin-top: 20px;">
+         <button type="submit" [disabled]="!listaActual.nombre || !listaActual.precio" style="flex: 1; padding: 12px; background: #2b804f; color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer;">
+           {{ modoEdicion ? 'Actualizar Tarifa' : 'Guardar Tarifa' }}
+         </button>
+         
+         @if (modoEdicion) {
+           <button type="button" (click)="cancelarEdicion()" style="padding: 12px 20px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+             Cancelar
+           </button>
+         }
+       </div>
+    </form>
+
+    <h4 style="color: #2b804f; margin-top: 40px;">Tarifario Actual</h4>
+    
+    @if (listas.length === 0) {
+      <p style="color: #6c757d; font-style: italic; text-align: center;">No hay tarifas registradas...</p>
+    } @else {
+      <ul style="list-style-type: none; padding: 0; margin: 0;">
+        @for (item of listas; track item.listaPrecioId) {
+          <li style="background: #f4f6f9; padding: 15px; border-left: 5px solid #2b804f; margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="color: #1a237e; display: block; font-size: 16px;">{{ item.nombre }}</strong> 
+              <span style="color: #6c757d; font-size: 13px;">{{ item.descripcion || 'Sin descripción' }}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+              <span style="font-size: 18px; font-weight: bold; color: #2b804f;">${{ item.precio | number:'1.2-2' }}</span>
+              <button (click)="editarLista(item)" style="background: #ffc107; color: #000; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 12px; font-weight: bold;">Editar</button>
+              <button (click)="eliminarLista(item.listaPrecioId)" style="background: #dc3545; color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 12px;">Eliminar</button>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

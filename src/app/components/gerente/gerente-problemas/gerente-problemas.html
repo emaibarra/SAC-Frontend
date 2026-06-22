@@ -1,0 +1,74 @@
+<div style="padding: 20px; font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto;">
+  
+  <button routerLink="/gerente/dashboard" style="margin-bottom: 20px; padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+    ⬅ Volver al Dashboard
+  </button>
+
+  <div style="background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(42, 43, 83, 0.08);">
+    
+    <h3 style="color: #2b4b80; margin-top: 0; border-bottom: 2px solid #f08a4b; padding-bottom: 10px;">
+      ⚠️ Gestión de Problemas / Tipos de Falla
+    </h3>
+    
+    <form (ngSubmit)="guardarProblema()" style="margin: 25px 0; background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #2b4b80;">
+       <h4 style="margin-top: 0; color: #2b4b80; margin-bottom: 15px;">
+         {{ modoEdicion ? '✏️ Editar Problema' : '➕ Nuevo Problema' }}
+       </h4>
+       
+       <div style="display: flex; flex-direction: column; gap: 15px;">
+         <input type="text" name="nombre" [(ngModel)]="problemaActual.problemaNombre" placeholder="Nombre del problema (Ej. Falla de conexión, Pantalla rota...)" required style="padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none; width: 100%; box-sizing: border-box;">
+         
+         <div class="form-group">
+           <label style="display: block; margin-bottom: 5px; color: #2b4b80; font-weight: bold;">Asociar Tarifa / Costo Base:</label>
+           <select [(ngModel)]="problemaActual.listaPrecio.listaPrecioId" name="listaPrecioId" required style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none; background: white; box-sizing: border-box;">
+             <option [ngValue]="null" disabled selected>Selecciona una tarifa del listado de precios...</option>
+             @for (precio of listasPrecio; track precio.listaPrecioId) {
+               <option [value]="precio.listaPrecioId">
+                 {{ precio.nombre }} (${{ precio.precio | number:'1.2-2' }})
+               </option>
+             }
+           </select>
+         </div>
+
+         <textarea name="descripcion" [(ngModel)]="problemaActual.problemaDescripcion" placeholder="Descripción detallada (opcional)" rows="3" style="padding: 12px; border: 1px solid #ccc; border-radius: 6px; outline: none; width: 100%; resize: vertical; box-sizing: border-box;"></textarea>
+       </div>
+
+       <div style="display: flex; gap: 10px; margin-top: 20px;">
+         <button type="submit" [disabled]="!problemaActual.problemaNombre || !problemaActual.listaPrecio.listaPrecioId" style="flex: 1; padding: 12px; background: #2b4b80; color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer;">
+           {{ modoEdicion ? 'Actualizar Cambios' : 'Guardar Problema' }}
+         </button>
+         
+         @if (modoEdicion) {
+           <button type="button" (click)="cancelarEdicion()" style="padding: 12px 20px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+             Cancelar
+           </button>
+         }
+       </div>
+    </form>
+
+    <h4 style="color: #2b4b80; margin-top: 40px;">Listado de Problemas</h4>
+    
+    @if (problemas.length === 0) {
+      <p style="color: #6c757d; font-style: italic; text-align: center;">No hay problemas registrados...</p>
+    } @else {
+      <ul style="list-style-type: none; padding: 0; margin: 0;">
+        @for (prob of problemas; track prob.problemaId) {
+          <li style="background: #f4f6f9; padding: 15px; border-left: 5px solid #2b4b80; margin-bottom: 10px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="color: #1a237e; display: block; font-size: 16px;">{{ prob.problemaNombre }}</strong> 
+              <span style="color: #6c757d; font-size: 13px; display: block; margin-bottom: 8px;">{{ prob.problemaDescripcion || 'Sin descripción' }}</span>
+              
+              <span style="background: #e8eaf6; color: #1a237e; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; display: inline-block;">
+                💰 Tarifa: {{ prob.listaPrecio ? prob.listaPrecio.nombre + ' ($' + prob.listaPrecio.precio + ')' : 'Sin tarifa asignada' }}
+              </span>
+            </div>
+            <div style="display: flex; gap: 10px;">
+              <button (click)="editarProblema(prob)" style="background: #ffc107; color: #000; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 12px; font-weight: bold;">Editar</button>
+              <button (click)="eliminarProblema(prob.problemaId)" style="background: #dc3545; color: white; border: none; border-radius: 4px; padding: 8px 12px; cursor: pointer; font-size: 12px;">Eliminar</button>
+            </div>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

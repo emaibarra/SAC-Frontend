@@ -14,6 +14,8 @@ import { DashboardGerenteComponent } from './components/gerente/gerente-dashboar
 import { GerenteTecnicosComponent } from './components/gerente/gerente-tecnicos/gerente-tecnicos.component';
 import { GerenteZonasComponent } from './components/gerente/gerente-zonas/gerente-zonas';
 import { AbmTipoDniComponent } from './components/admin/abm-tipo-dni/abm-tipo-dni';
+import { GerenteProblemasComponent } from './components/gerente/gerente-problemas/gerente-problemas';
+import { GerenteListaPreciosComponent } from './components/gerente/gerente-lista-precios/gerente-lista-precios';
 export const routes: Routes = [
   // Ruta pública
   { path: 'login', component: LoginComponent },
@@ -33,25 +35,35 @@ export const routes: Routes = [
   canActivate: [roleGuard],
   data: { rolEsperado: 'ADMINISTRADOR' } 
 },
-
   { 
     path: 'admin/provincias', 
     component: AbmProvinciaComponent,
     canActivate: [roleGuard],
     data: { rolEsperado: 'ADMINISTRADOR' } 
   },
+ { 
+    path: 'admin/estados', 
+    component: AbmEstadoSolicitudComponent,
+    canActivate: [roleGuard],
+    data: { rolEsperado: 'ADMINISTRADOR' } 
+  },
+  { path: 'admin/tipos-dni', component: AbmTipoDniComponent},
 
   // <-- Agregamos la ruta del gerente/empresa
   { path: 'gerente/dashboard', component: DashboardGerenteComponent },
   //Ruta para gestionar técnicos (solo visible para el gerente)
 { path: 'gerente/tecnicos', component: GerenteTecnicosComponent },
   // NUEVA RUTA PARA ESTADOS
-  { 
-    path: 'admin/estados', 
-    component: AbmEstadoSolicitudComponent,
-    canActivate: [roleGuard],
-    data: { rolEsperado: 'ADMINISTRADOR' } 
+   { path: 'gerente/lista-precios', component: GerenteListaPreciosComponent },
+   { 
+    path: 'gerente/zonas', 
+    component: GerenteZonasComponent 
+    //canActivate: [roleGuard], // Agrega esto si tienes el guard configurado
+    //data: { rolEsperado: 'GERENTE' }
   },
+  
+  {path: 'gerente/problemas', component: GerenteProblemasComponent},
+
 // --- RUTAS DEL TÉCNICO---
   { 
     path: 'tecnico', 
@@ -59,14 +71,9 @@ export const routes: Routes = [
     canActivate: [roleGuard],
     data: { rolEsperado: 'TECNICO' } // Asumiendo que crearás este rol
   },
-  { 
-    path: 'gerente/zonas', 
-    component: GerenteZonasComponent 
-    // canActivate: [RoleGuard], // Agrega esto si tienes el guard configurado
-    // data: { expectedRole: 'GERENTE' }
-  },
-  { path: 'admin/tipos-dni', component: AbmTipoDniComponent},
+  
   // Redirecciones por defecto
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
+  
 ];
