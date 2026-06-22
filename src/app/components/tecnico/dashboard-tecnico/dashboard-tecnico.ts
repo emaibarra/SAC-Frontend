@@ -1,7 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-
+import { TecnicoService } from '../../../services/tecnico.service'; // <-- NUEVO
+import { AuthService } from '../../../services/auth.service'; // <-- NUEVO
 @Component({
   selector: 'app-dashboard-tecnico',
   standalone: true,
@@ -11,13 +12,27 @@ import { Router } from '@angular/router';
 export class DashboardTecnicoComponent {
 
   private router = inject(Router);
-
+ private tecnicoService = inject(TecnicoService); // <-- NUEVO
+  private authService = inject(AuthService); // <-- NUEVO
+  
+  // NUEVO: Variable para guardar los datos reales del técnico
+  miPerfil: any = null;
   // Variables para simular el estado del técnico
   estadoActual: string = 'DISPONIBLE';
-  
-  // Simulamos que le entra una alerta de un ciclista (en el futuro esto vendrá del Backend)
-  asistenciaActiva: boolean = true; 
+  // Lo pasamos a FALSE por defecto para que inicie en la pantalla de "Esperando..."
+  asistenciaActiva: boolean = false; 
 
+  // NUEVO: Al iniciar la pantalla, buscamos quién es el que ingresó
+  ngOnInit(): void {
+    const usuarioLogueado = this.authService.getUsuarioActual();
+    if (usuarioLogueado && usuarioLogueado.username) {
+      this.tecnicoService.getPerfilPorUsername(usuarioLogueado.username).subscribe({
+        next: (data) => {
+          this.miPerfil = data;
+        },
+        error: (err) => console.error('Error al cargar mi perfil de técnico', err)
+      });
+    }}
   cambiarEstado(nuevoEstado: string): void {
     this.estadoActual = nuevoEstado;
     // Aquí en el futuro avisaremos al backend que este técnico está ocupado o libre

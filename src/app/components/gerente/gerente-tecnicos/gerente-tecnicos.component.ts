@@ -20,7 +20,7 @@ export class GerenteTecnicosComponent implements OnInit {
   nuevoTecnico = {
     tecnicoNombre: '',
     tecnicoDNI: null,
-    tecnicoCBU: null,
+    tecnicoCBU: '',
     tecnicoEmail: '',
     tecnicoDireccion: '',
     usuarioNombre: '',      
@@ -89,6 +89,7 @@ export class GerenteTecnicosComponent implements OnInit {
       rolId: 3, // IMPORTANTE: Asegúrate de que el ID 3 corresponda al Rol "TECNICO" en tu base de datos
       empresaId: this.nuevoTecnico.empresaId,
       zonaEmpresaId: this.nuevoTecnico.zonaEmpresaId,
+      tipoDniId: this.nuevoTecnico.tipoDniId, // NUEVO CAMPO PARA EL TIPO DE DNI
       tecnico: {
         tecnicoNombre: this.nuevoTecnico.tecnicoNombre,
         tecnicoDNI: this.nuevoTecnico.tecnicoDNI,
@@ -106,7 +107,7 @@ export class GerenteTecnicosComponent implements OnInit {
         
         // 3. Reseteamos el formulario correctamente
         this.nuevoTecnico = { 
-          tecnicoNombre: '', tecnicoDNI: null, tecnicoCBU: null, 
+          tecnicoNombre: '', tecnicoDNI: null, tecnicoCBU: '', 
           tecnicoEmail: '', tecnicoDireccion: '', 
           usuarioNombre: '', usuarioPassword: '', 
           empresaId: this.nuevoTecnico.empresaId,

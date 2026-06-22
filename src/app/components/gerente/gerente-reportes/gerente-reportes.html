@@ -1,0 +1,106 @@
+<!-- Estilos para la impresión en PDF -->
+<style>
+  @media print {
+    .no-print { display: none !important; }
+    body, .contenedor-reporte { background-color: white !important; box-shadow: none !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
+    table { border-collapse: collapse; }
+    th { background-color: #f8f9fa !important; color: black !important; border: 1px solid #ccc; }
+    td { border: 1px solid #ccc; }
+  }
+  
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  th { background-color: #2b4b80; color: white; padding: 12px; text-align: left; }
+  td { padding: 12px; border-bottom: 1px solid #eee; color: #333; }
+  tr:nth-child(even) { background-color: #f9fbff; }
+</style>
+
+<div style="padding: 20px; font-family: Arial, sans-serif; background-color: #f4f7f6; min-height: 100vh;">
+  
+  <div class="contenedor-reporte" style="background: white; max-width: 850px; margin: 0 auto; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    
+    <!-- Botonera de Control (Se oculta al imprimir) -->
+    <div class="no-print" style="display: flex; justify-content: space-between; margin-bottom: 30px; border-bottom: 1px dashed #ccc; padding-bottom: 20px;">
+      <button routerLink="/gerente/dashboard" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+        ⬅ Volver al Dashboard
+      </button>
+      <button (click)="imprimirPDF()" style="padding: 10px 20px; background: #d84315; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">
+        🖨️ Exportar a PDF / Imprimir
+      </button>
+    </div>
+
+    <!-- Encabezado del Documento -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #2b4b80; padding-bottom: 15px; margin-bottom: 30px;">
+      <div>
+        <h1 style="margin: 0; color: #2b4b80; font-size: 28px;">Reporte Operativo SAC</h1>
+        <h3 style="margin: 5px 0 0 0; color: #6c757d; font-weight: normal;">
+          {{ tipoReporte === 'Zona' ? 'Distribución de Personal Técnico por Zona' : 'Catálogo de Problemas y Tarifas' }}
+        </h3>
+      </div>
+      <div style="text-align: right; color: #555; font-size: 14px;">
+        <p style="margin: 0 0 5px 0;"><strong>Fecha de emisión:</strong> {{ fechaGeneracion | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p style="margin: 0;"><strong>ID Empresa Emisora:</strong> #{{ empresaId }}</p>
+      </div>
+    </div>
+
+    <!-- REPORTE 1: POR ZONA -->
+    @if (tipoReporte === 'Zona') {
+      <p style="color: #555; line-height: 1.6;">El siguiente documento detalla la cantidad de personal técnico activo y asignado a cada una de las zonas operativas vinculadas a su empresa.</p>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Zona de Trabajo (Personalizada)</th>
+            <th style="text-align: center; width: 150px;">Técnicos Asignados</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (datosZonas.length === 0) {
+            <tr><td colspan="2" style="text-align: center; color: #888;">No hay técnicos registrados o zonas asignadas.</td></tr>
+          }
+          @for (item of datosZonas; track item.zonaNombre) {
+            <tr>
+              <td><strong>{{ item.zonaNombre }}</strong></td>
+              <td style="text-align: center; font-size: 18px; font-weight: bold; color: #2b4b80;">{{ item.cantidadTecnicos }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+
+    <!-- REPORTE 2: POR PROBLEMA -->
+    @if (tipoReporte === 'Problema') {
+      <p style="color: #555; line-height: 1.6;">El siguiente catálogo muestra todos los problemas técnicos estandarizados junto a sus descripciones y tarifas base asociadas para la atención al cliente.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo de Problema</th>
+            <th>Descripción</th>
+            <th>Categoría de Tarifa</th>
+            <th style="text-align: right;">Costo Base</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (datosProblemas.length === 0) {
+            <tr><td colspan="4" style="text-align: center; color: #888;">No hay problemas registrados en el sistema.</td></tr>
+          }
+          @for (prob of datosProblemas; track prob.problemaId) {
+            <tr>
+              <td><strong>{{ prob.problemaNombre }}</strong></td>
+              <td style="font-size: 13px; color: #555;">{{ prob.problemaDescripcion || 'N/A' }}</td>
+              <td><span style="background: #e8eaf6; padding: 4px 8px; border-radius: 4px; font-size: 12px;">{{ prob.listaPrecio?.nombre || 'Sin categoría' }}</span></td>
+              <td style="text-align: right; font-weight: bold; color: #2e7d32;">
+                {{ prob.listaPrecio ? ('$' + (prob.listaPrecio.precio | number:'1.2-2')) : '---' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+
+    <div style="margin-top: 50px; text-align: center; color: #aaa; font-size: 12px;">
+      Documento generado automáticamente por el Sistema de Asistencia al Ciclista (SAC).
+    </div>
+
+  </div>
+</div>

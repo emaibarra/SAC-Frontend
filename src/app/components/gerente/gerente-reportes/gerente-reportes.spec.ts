@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GerenteZonasComponent } from './gerente-zonas';
+import { GerenteReportes } from './gerente-reportes';
 
-describe('GerenteZonas', () => {
-  let component: GerenteZonasComponent;
-  let fixture: ComponentFixture<GerenteZonasComponent>;
+describe('GerenteReportes', () => {
+  let component: GerenteReportes;
+  let fixture: ComponentFixture<GerenteReportes>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GerenteZonasComponent],
+      imports: [GerenteReportes],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(GerenteZonasComponent);
+    fixture = TestBed.createComponent(GerenteReportes);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

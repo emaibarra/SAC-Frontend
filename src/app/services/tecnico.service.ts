@@ -24,6 +24,11 @@ export class TecnicoService {
     return this.http.get<any[]>(this.apiUrl, { headers: this.getHeaders() });
   }
 
+  // NUEVO: Buscar el perfil del técnico logueado
+  getPerfilPorUsername(username: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/perfil/${username}`, { headers: this.getHeaders() });
+  }
+  
   // Crear un nuevo técnico (enviando también sus credenciales de usuario)
   crearTecnico(tecnico: any): Observable<any> {
     return this.http.post<any>(this.apiUrl, tecnico, { headers: this.getHeaders() });

@@ -28,9 +28,7 @@ export class DashboardGerenteComponent implements OnInit {
       alert('Error: No se pudo identificar tu empresa.');
       return;
     }
-    
-    // Aquí luego conectaremos con el backend para descargar el PDF/Excel
-    alert(`Próximamente: Generando reporte por ${tipo} para la empresa ID: ${empresaId}`);
+    this.router.navigate(['/gerente/reportes'], { queryParams: { tipo: tipo } });
   }
 
   cerrarSesion(): void {
