@@ -8,6 +8,7 @@ import { Observable, tap } from 'rxjs';
 export class AuthService {
   private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8080/api/auth/login';
+  private apiClienteUrl = 'http://localhost:8080/api/auth/login/cliente';
 
   // Método para enviar credenciales y guardar el token si es exitoso
   login(credenciales: any): Observable<any> {
@@ -15,6 +16,18 @@ export class AuthService {
       tap(respuesta => {
         if (respuesta && respuesta.token) {
           localStorage.setItem('token', respuesta.token);
+        }
+      })
+    );
+  }
+
+  // NUEVO: Método para el login del cliente (Google o Teléfono)
+  loginCliente(datosCliente: any): Observable<any> {
+    return this.http.post<any>(this.apiClienteUrl, datosCliente).pipe(
+      tap(respuesta => {
+        if (respuesta && respuesta.token) {
+          localStorage.setItem('token', respuesta.token);
+          localStorage.setItem('rol', respuesta.rol);
         }
       })
     );
