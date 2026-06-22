@@ -24,7 +24,12 @@ export class LoginComponent {
   // 3. Única función del componente: Loguearse y navegar
   iniciarSesion(): void {
     this.authService.login(this.credenciales).subscribe({
+      
       next: (respuesta) => {
+        if (respuesta && respuesta.error) {
+          alert('Credenciales incorrectas: ' + respuesta.error);
+        return;
+        }
         console.log('Login exitoso:', respuesta);
         
         // Guardamos las credenciales
@@ -54,6 +59,7 @@ export class LoginComponent {
         console.error('Error de login', error);
         // Fix de la variable de error
         this.errorLogin = 'Credenciales incorrectas o acceso no autorizado';
+        alert('Credenciales incorrectas'+ (error?.message ? ': ' + error.message : ''));
       }
     });
   }

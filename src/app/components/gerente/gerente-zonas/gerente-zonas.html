@@ -7,7 +7,10 @@
     <form (ngSubmit)="guardarZonaEmpresa()" style="margin: 25px 0;">
        <div style="display: flex; flex-wrap: wrap; gap: 15px;">
          <input type="text" name="nombrePersonalizado" [(ngModel)]="nuevaZonaEmpresa.zonaEmpresaNombre" placeholder="Nombre personalizado (Ej. Zona Sur Mendoza)" required style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid #ccc; border-radius: 6px;">
-         
+          <div style="display: flex; align-items: center; background: white; border: 1px solid #ccc; border-radius: 6px; padding: 0 12px; flex: 1; min-width: 150px;">
+           <span style="color: #666; font-weight: bold;">$</span>
+           <input type="number" name="precioKm" [(ngModel)]="nuevaZonaEmpresa.precioPorKm" placeholder="Precio por Km" required style="border: none; outline: none; padding: 12px 5px; width: 100%;">
+         </div>
          <select name="zonaGlobal" [(ngModel)]="nuevaZonaEmpresa.zona.zonaId" required style="flex: 1; min-width: 250px; padding: 12px; border: 1px solid #ccc; border-radius: 6px; background: white;">
            <option [ngValue]="null" disabled selected>Selecciona una Zona Oficial (creada por Admin)...</option>
            <option *ngFor="let zg of zonasGlobales" [ngValue]="zg.zonaId">{{ zg.zonaNombre }} ({{ zg.provincia?.provinciaNombre }})</option>
