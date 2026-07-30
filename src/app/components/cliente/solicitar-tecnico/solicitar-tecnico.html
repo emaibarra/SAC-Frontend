@@ -1,0 +1,85 @@
+<div class="cliente-container">
+  
+  <!-- PASO 1: Selección de Problemas -->
+  <div *ngIf="pasoActual === 1" class="card-paso animar-entrada">
+    <h2>¿Qué le pasó a tu bici?</h2>
+    <p class="subtitulo">Seleccioná los problemas que tenés para calcular el costo:</p>
+    
+    <div class="opciones-problemas">
+      <!-- Iteramos sobre la lista real que trajimos de la BD -->
+      <label *ngFor="let prob of problemasDisponibles" class="checkbox-label">
+        <input type="checkbox" 
+               [checked]="problemasSeleccionados.includes(prob.problemaId)" 
+               (change)="toggleProblema(prob.problemaId)">
+        <span class="custom-checkbox"></span>
+        {{ prob.problemaNombre }}
+      </label>
+    </div>
+
+    <button class="btn-principal mt-3" (click)="buscarTecnicos()">Buscar Técnico Cercano</button>
+  </div>
+
+
+  <!-- PASO 2: Lista de Técnicos -->
+  <div *ngIf="pasoActual === 2" class="card-paso animar-entrada">
+    <h2>Técnicos Disponibles</h2>
+    <p class="subtitulo">Estos son los mecánicos más cercanos a tu ubicación (Mendoza Centro):</p>
+    
+    <div *ngIf="tecnicosDisponibles.length === 0" class="alerta-vacia">
+      No hay técnicos disponibles en este momento. Intentá nuevamente más tarde.
+    </div>
+
+    <div class="lista-tecnicos" *ngIf="tecnicosDisponibles.length > 0">
+      <div class="tecnico-card" *ngFor="let tecnico of tecnicosDisponibles">
+        <div class="info-tec">
+          <h4>{{ tecnico.usuarioNombre }} <span class="badge-empresa">{{ tecnico.empresaNombre }}</span></h4>
+          <p>Distancia estimada: <strong>{{ tecnico.distanciaKM }} km</strong></p>
+          <h3 class="precio">${{ tecnico.precioVar }}</h3>
+        </div>
+        <button class="btn-seleccionar" (click)="seleccionarTecnico(tecnico)">Elegir</button>
+      </div>
+    </div>
+
+    <button class="btn-secundario mt-3" (click)="pasoActual = 1">Volver a los problemas</button>
+  </div>
+
+
+  <!-- PASO 3: Confirmación y Pago -->
+  <div *ngIf="pasoActual === 3 && tecnicoElegido" class="card-paso animar-entrada">
+    <h2>Confirmar Servicio</h2>
+    
+    <div class="resumen-box">
+      <div class="resumen-item">
+        <span>Técnico:</span>
+        <strong>{{ tecnicoElegido.usuarioNombre }}</strong>
+      </div>
+      <div class="resumen-item destacado">
+        <span>Total a pagar:</span>
+        <strong>${{ tecnicoElegido.precioVar }}</strong>
+      </div>
+    </div>
+
+    <div class="form-pago">
+      <label class="label-pago">Seleccioná tu método de pago:</label>
+      <select [(ngModel)]="datosPago.metodoPago" class="input-form">
+        <option value="EFECTIVO">Efectivo al finalizar</option>
+        <option value="VISA">Tarjeta VISA</option>
+      </select>
+
+      <!-- Se despliega solo si eligen VISA -->
+      <div *ngIf="datosPago.metodoPago === 'VISA'" class="datos-tarjeta animar-entrada mt-2">
+        <input type="number" placeholder="Número de Tarjeta (16 dígitos)" [(ngModel)]="datosPago.nroTarjeta" class="input-form mb-2">
+        <div class="flex-row">
+          <input type="text" placeholder="Vencimiento (MM/AA)" [(ngModel)]="datosPago.fechaVencTarjeta" class="input-form flex-1 mr-2">
+          <input type="number" placeholder="Cód. Seguridad (CVC)" [(ngModel)]="datosPago.codSeguridadTarjeta" class="input-form flex-1">
+        </div>
+      </div>
+    </div>
+
+    <div class="flex-row mt-3 gap-2">
+      <button class="btn-secundario flex-1" (click)="pasoActual = 2">Volver</button>
+      <button class="btn-principal flex-1" (click)="confirmarSolicitud()">Confirmar y Solicitar</button>
+    </div>
+  </div>
+
+</div>

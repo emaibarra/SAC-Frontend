@@ -18,6 +18,7 @@ import { ClienteDashboard } from './components/cliente/cliente-dashboard/cliente
 import { GerenteProblemasComponent } from './components/gerente/gerente-problemas/gerente-problemas';
 import { GerenteListaPreciosComponent } from './components/gerente/gerente-lista-precios/gerente-lista-precios';
 import { GerenteReportesComponent } from './components/gerente/gerente-reportes/gerente-reportes';
+import { SolicitarTecnico } from './components/cliente/solicitar-tecnico/solicitar-tecnico';
 export const routes: Routes = [
   // Ruta pública
   { path: 'login', component: LoginComponent },
@@ -44,6 +45,10 @@ export const routes: Routes = [
     // Aquí puedes agregar un Guardia (AuthGuard) verificando que el rol sea 'CLIENTE'
   },
 
+  { 
+    path: 'cliente/solicitar-tecnico', 
+    component: SolicitarTecnico 
+  },
 
   { 
     path: 'admin/provincias', 
