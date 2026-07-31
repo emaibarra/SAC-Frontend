@@ -30,4 +30,12 @@ export class SolicitudService {
       { headers: this.getHeaders() }
     );
   }
-}
+getSolicitudesPorTecnicoYEstado(tecnicoId: number, estado: string): Observable<any[]> {
+      return this.http.get<any[]>(`${this.apiUrl}/tecnico/${tecnicoId}/estado/${estado}`);
+    }
+
+    cambiarEstadoSolicitud(solicitudId: number, nuevoEstado: string): Observable<any> {
+      return this.http.put(`${this.apiUrl}/${solicitudId}/estado/${nuevoEstado}`, {});
+    }
+  }
+

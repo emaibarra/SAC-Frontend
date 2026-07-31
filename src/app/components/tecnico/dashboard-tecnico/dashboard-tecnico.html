@@ -1,71 +1,96 @@
-<div style="background: var(--color-fondo-pantalla, #f4f6f9); min-height: 100vh; padding: 15px; font-family: Arial, sans-serif;">
-  
-  <!-- Encabezado Superior -->
-  <div style="display: flex; justify-content: space-between; align-items: center; background: var(--color-azul-oscuro, #1a237e); color: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+<div class="container mt-4">
+  <!-- ENCABEZADO CON DATOS DEL TÉCNICO Y ESTADO -->
+  <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
     <div>
-      <h3 style="margin: 0; font-size: 18px;">📱 Panel de Unidad</h3>
-      <span style="font-size: 12px; color: #b0bec5;">
-        <!-- NUEVO: Mostrar datos reales de la Zona -->
-        {{ miPerfil ? 'Móvil Operativo | ' + miPerfil.zonaEmpresa?.zonaEmpresaNombre : 'Cargando datos...' }}
+      <h2 class="mb-0 fw-bold">Panel del Técnico - {{ miPerfil?.tecnicoNombre || 'Cargando...' }}</h2>
+    </div>
+    <div class="text-end">
+      <!-- Tu lógica original de estado visual -->
+      <span class="badge fs-6 mb-2" 
+            [ngClass]="{'bg-success': estadoActual === 'DISPONIBLE', 'bg-warning text-dark': estadoActual !== 'DISPONIBLE'}">
+        Estado: {{ estadoActual }}
       </span>
-    </div>
-    <button (click)="cerrarSesion()" style="background: #dc3545; color: white; border: none; border-radius: 6px; padding: 8px 12px; cursor: pointer; font-weight: bold;">
-      Salir
-    </button>
-  </div>
-
-  <!-- Tarjeta de Estado del Técnico -->
-  <div style="background: white; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-    
-    <!-- NUEVO: Saludo personalizado y nombre de su Empresa -->
-    <h2 style="color: var(--color-azul-oscuro, #1a237e); margin-top: 0;">¡Hola, {{ miPerfil?.tecnicoNombre || 'Técnico' }}!</h2>
-    <p style="color: #6c757d; font-size: 14px; margin-bottom: 20px;">Empresa: {{ miPerfil?.empresa?.empresaNombre || '---' }}</p>
-
-    <h4 style="margin-top: 0; color: #555;">Mi Estado Actual</h4>
-    
-    <!-- Selector de Estado -->
-    <div style="display: flex; justify-content: center; gap: 10px; margin-top: 15px;">
-      <button (click)="cambiarEstado('DISPONIBLE')" 
-              [style.background]="estadoActual === 'DISPONIBLE' ? '#28a745' : '#e9ecef'"
-              [style.color]="estadoActual === 'DISPONIBLE' ? 'white' : '#495057'"
-              style="flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s;">
-        🟢 DISPONIBLE
-      </button>
-      <button (click)="cambiarEstado('OCUPADO')" 
-              [style.background]="estadoActual === 'OCUPADO' ? '#dc3545' : '#e9ecef'"
-              [style.color]="estadoActual === 'OCUPADO' ? 'white' : '#495057'"
-              style="flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.3s;">
-        🔴 OCUPADO
-      </button>
+      <br>
+      <button class="btn btn-outline-danger btn-sm shadow-sm" (click)="cerrarSesion()">Cerrar Sesión</button>
     </div>
   </div>
 
-  <!-- Alerta de Asistencia Asignada (Simulada para el futuro) -->
-  <div *ngIf="asistenciaActiva" style="background: #fff3e0; border-left: 5px solid var(--color-naranja-teja, #e65100); padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(230, 81, 0, 0.15);">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-      <h3 style="margin: 0; color: var(--color-naranja-teja, #e65100);">🚨 ¡Nueva Solicitud!</h3>
-      <span style="background: #ffcc80; color: #d84315; padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold;">Urgente</span>
-    </div>
+  <!-- ========================================================================= -->
+  <!-- PANTALLA 1: ESPERANDO ENCARGOS (asistenciaActiva es false)                -->
+  <!-- ========================================================================= -->
+  <div *ngIf="!asistenciaActiva">
     
-    <p style="margin: 5px 0; color: #424242;"><strong>Ciclista:</strong> Martín Pérez</p>
-    <p style="margin: 5px 0; color: #424242;"><strong>Ubicación:</strong> Ruta 82, Luján de Cuyo</p>
-    <p style="margin: 5px 0; color: #424242;"><strong>Problema:</strong> Cadena rota, sin herramientas.</p>
+    <!-- Mensaje cuando la lista de pendientes está vacía -->
+    <div class="alert alert-info text-center shadow-sm" *ngIf="solicitudesPendientes.length === 0">
+      <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+      <strong>Buscando solicitudes cercanas...</strong> Mantente alerta.
+    </div>
 
-    <div style="margin-top: 20px; display: flex; gap: 10px;">
-      <button style="flex: 1; background: var(--color-azul-medio, #1976d2); color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
-        📍 Ver en Mapa
-      </button>
-      <button (click)="completarAsistencia()" style="flex: 1; background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
-        ✅ Finalizar
-      </button>
+    <!-- Lista de encargos entrantes -->
+    <div *ngIf="solicitudesPendientes.length > 0">
+      <h4 class="mb-3 text-warning fw-bold">¡Nuevos encargos entrantes!</h4>
+      
+      <div class="row">
+        <!-- Iteramos el arreglo de pendientes -->
+        <div class="col-md-6 mb-3" *ngFor="let sol of solicitudesPendientes">
+          <div class="card shadow-sm border-warning">
+            <div class="card-body">
+              <h5 class="card-title text-primary fw-bold">Solicitud #{{ sol.solicitudId }}</h5>
+              <p class="card-text mb-1"><strong>Ubicación:</strong> {{ sol.solicitudLocalizacion }}</p>
+              <p class="card-text mb-1"><strong>A cobrar:</strong> ${{ sol.solicitudPrecio }}</p>
+              <p class="card-text text-muted small"><strong>Fecha:</strong> {{ sol.fechaHoraAlta | date:'shortTime' }}</p>
+              
+              <div class="d-flex justify-content-end gap-2 mt-3">
+                <button class="btn btn-outline-danger btn-sm" (click)="rechazarEncargo(sol.solicitudId)">Rechazar</button>
+                <button class="btn btn-success shadow-sm" (click)="aceptarEncargo(sol)">Aceptar Encargo</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controles manuales de estado (tu lógica original conservada) -->
+    <div class="mt-5 text-center p-3 bg-light rounded border">
+      <p class="text-muted fw-bold mb-2">Cambiar mi estado manualmente:</p>
+      <div class="btn-group shadow-sm" role="group">
+        <button class="btn" [ngClass]="estadoActual === 'DISPONIBLE' ? 'btn-success' : 'btn-outline-success'" (click)="cambiarEstado('DISPONIBLE')">Disponible</button>
+        <button class="btn" [ngClass]="estadoActual === 'OCUPADO' ? 'btn-danger' : 'btn-outline-danger'" (click)="cambiarEstado('OCUPADO')">Ocupado</button>
+      </div>
     </div>
   </div>
 
-  <!-- Mensaje de espera -->
-  <div *ngIf="!asistenciaActiva && estadoActual === 'DISPONIBLE'" style="text-align: center; padding: 40px 20px; color: #78909c;">
-    <h1 style="font-size: 40px; margin: 0;">📡</h1>
-    <p style="font-size: 16px; font-weight: bold;">Esperando solicitudes de asistencia...</p>
-    <p style="font-size: 13px;">Mantén la app abierta para recibir alertas en tu zona.</p>
+  <!-- ========================================================================= -->
+  <!-- PANTALLA 2: ASISTENCIA EN CURSO (asistenciaActiva es true)                -->
+  <!-- ========================================================================= -->
+  <div *ngIf="asistenciaActiva && solicitudActiva">
+    <div class="card shadow border-primary mb-4">
+      <div class="card-header bg-primary text-white text-center py-3">
+        <h4 class="mb-0 fw-bold">Trabajo en Curso</h4>
+      </div>
+      <div class="card-body text-center p-5">
+        
+        <!-- Datos leídos del objeto solicitudActiva -->
+        <h1 class="display-4 text-primary mb-3 fw-bold">A Cobrar: ${{ solicitudActiva.solicitudPrecio }}</h1>
+        <h5 class="text-muted border-bottom pb-4 mb-4">{{ solicitudActiva.solicitudLocalizacion }}</h5>
+        
+        <div class="alert alert-secondary text-start mx-auto shadow-sm" style="max-width: 500px;">
+          <p class="mb-1"><strong>ID Solicitud:</strong> #{{ solicitudActiva.solicitudId }}</p>
+          <p class="mb-1" *ngIf="solicitudActiva.cliente">
+            <strong>Cliente:</strong> {{ solicitudActiva.cliente.clienteNombre || 'Anónimo' }} 
+            (Tel: {{ solicitudActiva.cliente.clienteTelefono }})
+          </p>
+          <p class="mb-0 text-muted small">Registrada el {{ solicitudActiva.fechaHoraAlta | date:'short' }}</p>
+        </div>
+
+        <!-- Botones que disparan tus métodos para finalizar o cancelar -->
+        <div class="mt-5 d-flex justify-content-center gap-3">
+          <button class="btn btn-outline-danger btn-lg px-4 shadow-sm" (click)="cancelarEncargo()">Cancelar Encargo</button>
+          <button class="btn btn-success btn-lg px-5 shadow" (click)="completarAsistencia()">Concluir Trabajo</button>
+        </div>
+
+      </div>
+    </div>
   </div>
 
 </div>
