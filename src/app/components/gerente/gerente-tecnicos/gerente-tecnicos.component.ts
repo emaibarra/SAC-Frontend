@@ -99,6 +99,15 @@ export class GerenteTecnicosComponent implements OnInit {
       }
     };
 
+    // 2. LA PRUEBA DE FUEGO: Imprimimos lo que vamos a enviar
+    console.log("PAYLOAD A ENVIAR:", payload);
+
+    // 3. Validación de seguridad antes de disparar la petición HTTP
+    if (!payload.rolId || !payload.empresaId || !payload.zonaEmpresaId || !payload.tipoDniId || isNaN(payload.zonaEmpresaId) || isNaN(payload.tipoDniId)) {
+      alert('Error en el formulario: Faltan IDs relacionales o están como null. Revisa la consola para ver cuál falta.');
+      return; // Detenemos la ejecución para que no de el error 400 en el backend
+    }
+
     // 2. Enviamos el payload estructurado, NO this.nuevoTecnico directamente
     this.tecnicoService.crearTecnico(payload).subscribe({
       next: () => {
