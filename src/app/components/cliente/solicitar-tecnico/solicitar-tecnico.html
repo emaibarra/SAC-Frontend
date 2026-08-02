@@ -1,12 +1,11 @@
 <div class="cliente-container">
   
-  <!-- PASO 1: Selección de Problemas -->
-  <div *ngIf="pasoActual === 1" class="card-paso animar-entrada">
+  <!-- PASO 1: Selección de Problemas (Modificado con [hidden] para Leaflet) -->
+  <div [hidden]="pasoActual !== 1" class="card-paso animar-entrada">
     <h2>¿Qué le pasó a tu bici?</h2>
     <p class="subtitulo">Seleccioná los problemas que tenés para calcular el costo:</p>
     
     <div class="opciones-problemas">
-      <!-- Iteramos sobre la lista real que trajimos de la BD -->
       <label *ngFor="let prob of problemasDisponibles" class="checkbox-label">
         <input type="checkbox" 
                [checked]="problemasSeleccionados.includes(prob.problemaId)" 
@@ -15,12 +14,17 @@
         {{ prob.problemaNombre }}
       </label>
     </div>
-<div style="margin-top: 20px; margin-bottom: 20px;">
-      <label style="display: block; font-weight: bold; margin-bottom: 8px;">Dirección de asistencia:</label>
-      <input type="text" [(ngModel)]="solicitudLocalizacion" placeholder="Ej: San Martín 123, frente a la plaza..." class="input-form" style="width: 100%;">
+
+    <!-- Modificado: Sección del mapa y el input -->
+    <div style="margin-top: 20px; margin-bottom: 20px;">
+      <label style="display: block; font-weight: bold; margin-bottom: 8px;">Ubicación de asistencia (Marcá en el mapa):</label>
+      
+      <!-- Contenedor de Leaflet -->
+      <div id="mapa-cliente" style="height: 300px; width: 100%; border-radius: 8px; margin-bottom: 10px; z-index: 1;"></div>
+      
+      <input type="text" [(ngModel)]="solicitudLocalizacion" placeholder="Las coordenadas aparecerán aquí..." class="input-form" style="width: 100%; background-color: #f5f5f5;" readonly>
     </div>
 
-    <!-- Modificamos el botón para que valide la dirección -->
     <button class="btn-principal mt-3" 
             [disabled]="problemasSeleccionados.length === 0 || !solicitudLocalizacion" 
             (click)="buscarTecnicos()">
@@ -49,7 +53,8 @@
       </div>
     </div>
 
-    <button class="btn-secundario mt-3" (click)="pasoActual = 1">Volver a los problemas</button>
+    <!-- Modificado: Llama al nuevo método para redimensionar el mapa -->
+    <button class="btn-secundario mt-3" (click)="volverAlPaso1()">Volver a los problemas</button>
   </div>
 
 
@@ -75,7 +80,6 @@
         <option value="VISA">Tarjeta VISA</option>
       </select>
 
-      <!-- Se despliega solo si eligen VISA -->
       <div *ngIf="datosPago.metodoPago === 'VISA'" class="datos-tarjeta animar-entrada mt-2">
         <input type="number" placeholder="Número de Tarjeta (16 dígitos)" [(ngModel)]="datosPago.nroTarjeta" class="input-form mb-2">
         <div class="flex-row">
@@ -86,6 +90,7 @@
     </div>
 
     <div class="flex-row mt-3 gap-2">
+      <!-- Modificado: Llama al nuevo método para que el mapa recargue bien su tamaño -->
       <button class="btn-secundario flex-1" (click)="pasoActual = 2">Volver</button>
       <button class="btn-principal flex-1" (click)="confirmarSolicitud()">Confirmar y Solicitar</button>
     </div>

@@ -3,6 +3,7 @@ import { SolicitudService } from '../../../services/solicitud.service';
 import { ProblemaService } from '../../../services/problema.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-solicitar-tecnico',
@@ -32,8 +33,59 @@ export class SolicitarTecnico {
   private solicitudService = inject(SolicitudService);
   private problemaService = inject(ProblemaService);
 
+  // --- Agregado: Variables del Mapa ---
+  private map!: L.Map;
+  private marker!: L.Marker;
+  private defaultIcon = L.icon({
+    iconUrl: 'assets/marker-icon.png',
+    shadowUrl: 'assets/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41]
+  });
+  // ------------------------------------
+
   ngOnInit(): void {
     this.cargarProblemas();
+  }
+
+  // Agregado: Inicializamos el mapa una vez que el HTML ya cargó
+  ngAfterViewInit(): void {
+    this.initMap();
+  }
+
+  // Agregado: Configuración de Leaflet
+  private initMap(): void {
+    this.map = L.map('mapa-cliente').setView([-32.889458, -68.845839], 13); // Centrado en Mendoza
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(this.map);
+
+    // Evento para capturar el clic
+    this.map.on('click', (e: L.LeafletMouseEvent) => {
+      const lat = e.latlng.lat;
+      const lng = e.latlng.lng;
+      
+      // Asignamos las coordenadas a tu variable existente
+      this.solicitudLocalizacion = `${lat},${lng}`;
+      this.cdr.detectChanges(); 
+
+      // Colocamos o movemos el marcador
+      if (this.marker) {
+        this.marker.setLatLng(e.latlng);
+      } else {
+        this.marker = L.marker(e.latlng, { icon: this.defaultIcon }).addTo(this.map);
+      }
+    });
+  }
+
+  // Agregado: Método auxiliar para volver al paso 1 sin que el mapa quede en gris
+  volverAlPaso1(): void {
+    this.pasoActual = 1;
+    // Dar un respiro al DOM antes de reajustar el tamaño del mapa
+    setTimeout(() => {
+      if (this.map) this.map.invalidateSize();
+    }, 0);
   }
 
   cargarProblemas(): void {
@@ -57,13 +109,20 @@ export class SolicitarTecnico {
     }
   }
 
-  buscarTecnicos(): void {
+ buscarTecnicos(): void {
     if (this.problemasSeleccionados.length === 0) {
       alert('Por favor, seleccioná al menos un problema.');
       return;
     }
     
-    this.solicitudService.buscarTecnicos(this.problemasSeleccionados).subscribe({
+    // Armamos el objeto con la estructura exacta que espera el DTO del backend
+    const requestPayload = {
+      problemasIds: this.problemasSeleccionados,
+      coordenadasCliente: this.solicitudLocalizacion // Aquí enviamos el string "lat,lng" del mapa
+    };
+    
+    // Enviamos el objeto completo en lugar de solo el arreglo
+    this.solicitudService.buscarTecnicos(requestPayload).subscribe({
       next: (tecnicos) => {
         this.tecnicosDisponibles = tecnicos;
         this.pasoActual = 2; 
@@ -74,7 +133,6 @@ export class SolicitarTecnico {
       }
     });
   }
-
   seleccionarTecnico(tecnico: any): void {
     this.tecnicoElegido = tecnico;
     this.pasoActual = 3; 
@@ -119,6 +177,13 @@ export class SolicitarTecnico {
         this.pasoActual = 1;
         this.problemasSeleccionados = [];
         this.tecnicoElegido = null;
+        this.solicitudLocalizacion = ''; // Limpiamos la ubicación tras el éxito
+        
+        // Removemos el pin del mapa al completar
+        if (this.marker) {
+          this.map.removeLayer(this.marker);
+          this.marker = undefined as any;
+        }
         // Opcional: limpiar también los datos de pago
         this.datosPago = { metodoPago: 'EFECTIVO', nroTarjeta: null, codSeguridadTarjeta: null, fechaVencTarjeta: '' };
       },

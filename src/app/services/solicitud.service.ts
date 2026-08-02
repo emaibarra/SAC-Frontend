@@ -15,10 +15,10 @@ export class SolicitudService {
     return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
 
-  buscarTecnicos(problemasIds: number[]): Observable<any[]> {
+  buscarTecnicos(requestDTO: { problemasIds: number[], coordenadasCliente: string }): Observable<any[]> {
     return this.http.post<any[]>(
       `${this.apiUrl}/buscar-tecnicos`, 
-      { problemasIds }, 
+      requestDTO, // Enviamos el objeto completo directamente
       { headers: this.getHeaders() }
     );
   }
