@@ -37,10 +37,12 @@ export class SolicitarTecnico {
   private map!: L.Map;
   private marker!: L.Marker;
   private defaultIcon = L.icon({
-    iconUrl: 'assets/marker-icon.png',
-    shadowUrl: 'assets/marker-shadow.png',
+    // Usamos las imágenes oficiales alojadas en la nube para evitar conflictos de rutas en Angular
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
     iconSize: [25, 41],
-    iconAnchor: [12, 41]
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34]
   });
   // ------------------------------------
 
@@ -118,13 +120,44 @@ export class SolicitarTecnico {
     // Armamos el objeto con la estructura exacta que espera el DTO del backend
     const requestPayload = {
       problemasIds: this.problemasSeleccionados,
-      coordenadasCliente: this.solicitudLocalizacion // Aquí enviamos el string "lat,lng" del mapa
+      coordenadasCliente: this.solicitudLocalizacion 
     };
     
-    // Enviamos el objeto completo en lugar de solo el arreglo
+    // Enviamos el objeto completo
     this.solicitudService.buscarTecnicos(requestPayload).subscribe({
       next: (tecnicos) => {
-        this.tecnicosDisponibles = tecnicos;
+        // 1. Convertimos la ubicación del cliente a un objeto LatLng de Leaflet
+        const [latCliente, lngCliente] = this.solicitudLocalizacion.split(',').map(Number);
+        const puntoCliente = L.latLng(latCliente, lngCliente);
+
+        // 2. Mapeamos la lista de técnicos para calcular el precio dinámico de cada uno
+        this.tecnicosDisponibles = tecnicos.map((tecnico: any) => {
+          
+          // Usamos las coordenadas del técnico (Aquí aplicamos las hardcodeadas por ahora)
+          const latTecnico = -32.8994;
+          const lngTecnico = -68.8354;
+          const puntoTecnico = L.latLng(latTecnico, lngTecnico);
+
+          // 3. Leaflet calcula la distancia en metros, la pasamos a Kilómetros
+          const distanciaMetros = puntoCliente.distanceTo(puntoTecnico);
+          const distanciaKm = distanciaMetros / 1000;
+
+          // 4. Obtenemos los valores de la empresa (Con un valor de respaldo por si llegan vacíos)
+          // OJO: Revisa si en tu backend estas variables se llaman así dentro de "empresa"
+          const precioBase = tecnico.empresa?.precioBase || 2000; 
+          const precioPorKm = tecnico.empresa?.precioPorKm || 500;
+
+          // 5. Aplicamos la fórmula matemática del precio total
+          const precioCalculado = precioBase + (distanciaKm * precioPorKm);
+
+          // 6. Retornamos el técnico con el nuevo precio modificado y la distancia
+          return {
+            ...tecnico,
+            distanciaKm: distanciaKm.toFixed(1), // Guardamos los km para que puedas mostrarlos en el HTML
+            precioVar: Math.round(precioCalculado) // Sobreescribimos el 5000 por el precio real redondeado
+          };
+        });
+
         this.pasoActual = 2; 
       },
       error: (err) => {
@@ -133,6 +166,7 @@ export class SolicitarTecnico {
       }
     });
   }
+
   seleccionarTecnico(tecnico: any): void {
     this.tecnicoElegido = tecnico;
     this.pasoActual = 3; 
@@ -157,10 +191,10 @@ export class SolicitarTecnico {
     const dtoPago: any = {
       clienteId: 1, // ACORDATE: esto luego lo tenés que sacar de los datos del usuario logueado
       tecnicoId: this.tecnicoElegido.tecnicoId,
-      solicitudPrecio: this.tecnicoElegido.precioVar,
+      precioTotal: this.tecnicoElegido.precioVar,
       problemasIds: this.problemasSeleccionados,
       metodoPago: this.datosPago.metodoPago,
-      solicitudLocalizacion: this.solicitudLocalizacion
+      coordenadasCliente: this.solicitudLocalizacion
     };
 
     // 3. Solo agregamos los datos de la tarjeta si eligió VISA

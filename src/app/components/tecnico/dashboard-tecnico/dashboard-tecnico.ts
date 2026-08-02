@@ -3,7 +3,11 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TecnicoService } from '../../../services/tecnico.service'; 
 import { AuthService } from '../../../services/auth.service'; 
-import { SolicitudService } from '../../../services/solicitud.service'; // <-- NUEVO
+import { SolicitudService } from '../../../services/solicitud.service';
+
+// <-- MAPA: Importaciones necesarias
+import * as L from 'leaflet';
+import 'leaflet-routing-machine';
 
 @Component({
   selector: 'app-dashboard-tecnico',
@@ -16,67 +20,75 @@ export class DashboardTecnicoComponent implements OnInit {
   private router = inject(Router);
   private tecnicoService = inject(TecnicoService); 
   private authService = inject(AuthService); 
-  private solicitudService = inject(SolicitudService); // <-- NUEVO
+  private solicitudService = inject(SolicitudService);
 
-  // Variable para guardar los datos reales del técnico
   miPerfil: any = null;
-  // Variables para simular el estado del técnico
   estadoActual: string = 'DISPONIBLE';
-  // Lo pasamos a FALSE por defecto para que inicie en la pantalla de "Esperando..."
   asistenciaActiva: boolean = false; 
 
-  // NUEVO: Variables para manejar los datos de la BD
   solicitudesPendientes: any[] = [];
   solicitudActiva: any = null;
 
-  // Al iniciar la pantalla, buscamos quién es el que ingresó
+  // <-- MAPA: Variables para el mapa y coordenadas hardcodeadas
+  private map: any;
+  private routingControl: any;
+  private tecnicoUbicacion: [number, number] = [-32.8994, -68.8354]; // Belgrano, Mendoza
+  private iconConfig = L.icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41]
+  });
+
   ngOnInit(): void {
     const usuarioLogueado = this.authService.getUsuarioActual();
     if (usuarioLogueado && usuarioLogueado.username) {
       this.tecnicoService.getPerfilPorUsername(usuarioLogueado.username).subscribe({
         next: (data) => {
           this.miPerfil = data;
-          this.cargarSolicitudes(); // <-- NUEVO: Buscamos si hay encargos en la BD
+          this.cargarSolicitudes(); 
         },
         error: (err) => console.error('Error al cargar mi perfil de técnico', err)
       });
     }
   }
 
-  // NUEVO: Buscar las solicitudes sin romper tu lógica visual
   cargarSolicitudes(): void {
     if (!this.miPerfil) return;
     const idTecnico = this.miPerfil.tecnicoCodigo; 
 
-    // 1. Buscar las que recién llegan
     this.solicitudService.getSolicitudesPorTecnicoYEstado(idTecnico, 'Pendiente')
       .subscribe(res => this.solicitudesPendientes = res);
 
-    // 2. Buscar si ya estaba trabajando en una (por si recarga la página)
     this.solicitudService.getSolicitudesPorTecnicoYEstado(idTecnico, 'Aceptada')
       .subscribe(res => {
         if (res && res.length > 0) {
           this.solicitudActiva = res[0];
-          this.asistenciaActiva = true; // Mostramos tu pantalla de asistencia
+          this.asistenciaActiva = true; 
           this.estadoActual = 'OCUPADO';
+          
+          // <-- MAPA: Si ya estaba en curso, cargamos el mapa al iniciar
+          setTimeout(() => this.inicializarMapaRuta(), 200);
         }
       });
   }
 
-  // NUEVO: Botón para aceptar el encargo que entra
   aceptarEncargo(solicitud: any): void {
     this.solicitudService.cambiarEstadoSolicitud(solicitud.solicitudId, 'Aceptada').subscribe({
       next: () => {
         this.solicitudActiva = solicitud;
-        this.asistenciaActiva = true; // Cambia tu interfaz a modo activo
+        this.asistenciaActiva = true; 
         this.estadoActual = 'OCUPADO';
-        this.cargarSolicitudes(); // Refresca las listas
+        
+        // <-- MAPA: Usamos setTimeout para que Angular renderice el div *ngIf antes de inyectar Leaflet
+        setTimeout(() => this.inicializarMapaRuta(), 200);
+
+        this.cargarSolicitudes(); 
       },
       error: (err) => alert('Error: ' + err.error?.error)
     });
   }
 
-  // NUEVO: Botón para rechazar el encargo antes de tomarlo
   rechazarEncargo(solicitudId: number): void {
     if(confirm('¿Seguro que deseas rechazar este encargo?')) {
       this.solicitudService.cambiarEstadoSolicitud(solicitudId, 'Cancelada').subscribe({
@@ -86,15 +98,12 @@ export class DashboardTecnicoComponent implements OnInit {
     }
   }
 
-  // NUEVO: Cancelar encargo ya aceptado
   cancelarEncargo(): void {
     if (confirm('¿Seguro que deseas cancelar este trabajo en curso?')) {
        if (this.solicitudActiva) {
          this.solicitudService.cambiarEstadoSolicitud(this.solicitudActiva.solicitudId, 'Cancelada').subscribe({
            next: () => {
-             this.asistenciaActiva = false; // Vuelve a tu pantalla de inicio
-             this.estadoActual = 'DISPONIBLE';
-             this.solicitudActiva = null;
+             this.limpiarVistaActiva(); // <-- MAPA: Refactorizamos para no repetir código
              alert('Encargo cancelado.');
              this.cargarSolicitudes();
            },
@@ -104,17 +113,14 @@ export class DashboardTecnicoComponent implements OnInit {
     }
   }
 
-  // MODIFICADO: Le agrega la petición a la BD a tu método original
   completarAsistencia(): void {
     if (confirm('¿Confirmas que la asistencia fue resuelta con éxito?')) {
       if (this.solicitudActiva) {
         this.solicitudService.cambiarEstadoSolicitud(this.solicitudActiva.solicitudId, 'Terminada').subscribe({
           next: () => {
-            this.asistenciaActiva = false;
-            this.estadoActual = 'DISPONIBLE'; // Vuelve a estar libre
-            this.solicitudActiva = null;
+            this.limpiarVistaActiva(); // <-- MAPA: Refactorizamos para limpiar mapa
             alert('¡Excelente trabajo! Volviste a estar Disponible.');
-            this.cargarSolicitudes(); // Limpia la pantalla
+            this.cargarSolicitudes();
           },
           error: (err) => alert('Error al concluir: ' + err.error?.error)
         });
@@ -122,9 +128,19 @@ export class DashboardTecnicoComponent implements OnInit {
     }
   }
 
+  // <-- MAPA: Método auxiliar para limpiar variables y mapa
+  limpiarVistaActiva(): void {
+    this.asistenciaActiva = false; 
+    this.estadoActual = 'DISPONIBLE';
+    this.solicitudActiva = null;
+    if (this.map) {
+      this.map.remove(); // Destruimos el mapa para liberar memoria
+      this.map = null;
+    }
+  }
+
   cambiarEstado(nuevoEstado: string): void {
     this.estadoActual = nuevoEstado;
-    // Aquí en el futuro avisaremos al backend que este técnico está ocupado o libre
   }
 
   cerrarSesion(): void {
@@ -133,5 +149,48 @@ export class DashboardTecnicoComponent implements OnInit {
       localStorage.removeItem('rol');
       this.router.navigate(['/login']);
     }
+  }
+
+  // ==========================================
+  // <-- MAPA: LÓGICA DE LEAFLET Y RUTAS
+  // ==========================================
+  inicializarMapaRuta(): void {
+    // Si ya existe una instancia de mapa, la borramos para evitar errores de renderizado
+    if (this.map) {
+      this.map.remove();
+    }
+
+    // Inicializamos el contenedor del HTML
+    this.map = L.map('mapaRutaTecnico').setView(this.tecnicoUbicacion, 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(this.map);
+
+    // Trazamos la ruta usando los datos de la solicitud
+    this.trazarRuta();
+  }
+
+  trazarRuta(): void {
+    if (!this.solicitudActiva || !this.solicitudActiva.solicitudLocalizacion) return;
+
+    // Convertimos el string "lat,lng" a números
+    const coordenadas = this.solicitudActiva.solicitudLocalizacion.split(',');
+    const latCliente = parseFloat(coordenadas[0]);
+    const lngCliente = parseFloat(coordenadas[1]);
+
+    this.routingControl = (L as any).Routing.control({
+      waypoints: [
+        L.latLng(this.tecnicoUbicacion[0], this.tecnicoUbicacion[1]), // Origen: Técnico
+        L.latLng(latCliente, lngCliente)                              // Destino: Cliente
+      ],
+      routeWhileDragging: false,
+      show: false, // <-- Oculta el panel feo de instrucciones (gire a la derecha, etc)
+      addWaypoints: false,
+      fitSelectedRoutes: true,
+      createMarker: (i: number, waypoint: any, n: number) => {
+        return L.marker(waypoint.latLng, { icon: this.iconConfig });
+      }
+    }).addTo(this.map);
   }
 }
