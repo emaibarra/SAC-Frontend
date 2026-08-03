@@ -1,0 +1,47 @@
+<div style="padding: 20px; max-width: 800px; margin: 0 auto; font-family: Arial, sans-serif;">
+  
+  <!-- Botón de volver -->
+  <div style="display: flex; justify-content: flex-start; margin-bottom: 20px;">
+    <button routerLink="/cliente/dashboard" 
+            style="background: transparent; color: #2b4b80; border: 1px solid #2b4b80; border-radius: 6px; padding: 8px 15px; cursor: pointer; font-weight: bold; transition: 0.2s;"
+            onmouseover="this.style.background='#2b4b80'; this.style.color='white'"
+            onmouseout="this.style.background='transparent'; this.style.color='#2b4b80'">
+      ⬅ Volver al Inicio
+    </button>
+  </div>
+
+  <h2 style="color: #2b4b80; border-bottom: 2px solid #f08a4b; padding-bottom: 10px;">Mi Historial de Servicios</h2>
+
+  <!-- Mensaje si no hay solicitudes -->
+  <div *ngIf="solicitudes.length === 0" style="background-color: #f8f9fa; padding: 20px; text-align: center; border-radius: 8px; margin-top: 20px; color: #6c757d;">
+    Todavía no tienes solicitudes de servicio registradas.
+  </div>
+
+  <!-- Tabla de historial -->
+  <table *ngIf="solicitudes.length > 0" style="width: 100%; border-collapse: collapse; margin-top: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <thead>
+      <tr style="background-color: #2b4b80; color: white; text-align: left;">
+        <th style="padding: 12px; border: 1px solid #ddd;">Fecha</th>
+        <th style="padding: 12px; border: 1px solid #ddd;">Técnico</th>
+        <th style="padding: 12px; border: 1px solid #ddd;">Estado</th>
+        <th style="padding: 12px; border: 1px solid #ddd;">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let sol of solicitudes" style="background-color: white; border-bottom: 1px solid #ddd; text-align: left;">
+        <!-- Usamos el pipe de fecha de Angular -->
+        <td style="padding: 12px;">{{ sol.fechaHoraAlta | date:'dd/MM/yyyy HH:mm' }}</td>
+        
+        <td style="padding: 12px;">{{ sol.tecnico?.tecnicoNombre || 'Sin asignar' }}</td>
+        
+        <!-- Cambiamos el color según el estado -->
+        <td style="padding: 12px; font-weight: bold;" 
+            [ngStyle]="{'color': sol.estadoSolicitud?.estadoNombre === 'FINALIZADO' ? '#28a745' : '#f08a4b'}">
+          {{ sol.estadoSolicitud?.estadoNombre || 'Pendiente' }}
+        </td>
+        
+        <td style="padding: 12px; font-weight: bold;">${{ sol.solicitudPrecio }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

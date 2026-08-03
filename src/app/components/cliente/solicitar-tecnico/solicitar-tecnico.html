@@ -1,5 +1,14 @@
 <div class="cliente-container">
-  
+  <div style="display: flex; justify-content: flex-start; margin-bottom: 20px;">
+    <!-- Nota: Asegurate de que la ruta "/cliente/dashboard" coincida con tu app.routes.ts -->
+    <button routerLink="/cliente/dashboard" 
+            style="background: transparent; color: #2b4b80; border: 1px solid #2b4b80; border-radius: 6px; padding: 8px 15px; cursor: pointer; font-weight: bold; transition: 0.2s;"
+            onmouseover="this.style.background='#2b4b80'; this.style.color='white'"
+            onmouseout="this.style.background='transparent'; this.style.color='#2b4b80'">
+      ⬅ Volver al Inicio
+    </button>
+  </div>
+
   <!-- PASO 1: Selección de Problemas (Modificado con [hidden] para Leaflet) -->
   <div [hidden]="pasoActual !== 1" class="card-paso animar-entrada">
     <h2>¿Qué le pasó a tu bici?</h2>
@@ -75,16 +84,32 @@
 
     <div class="form-pago">
       <label class="label-pago">Seleccioná tu método de pago:</label>
-      <select [(ngModel)]="datosPago.metodoPago" class="input-form">
+      
+      <!-- Usamos tipoPago para alternar entre EFECTIVO y TARJETA -->
+      <select [(ngModel)]="datosPago.tipoPago" class="input-form" name="tipoPago">
         <option value="EFECTIVO">Efectivo al finalizar</option>
-        <option value="VISA">Tarjeta VISA</option>
+        <option value="TARJETA">Tarjeta guardada</option>
       </select>
 
-      <div *ngIf="datosPago.metodoPago === 'VISA'" class="datos-tarjeta animar-entrada mt-2">
-        <input type="number" placeholder="Número de Tarjeta (16 dígitos)" [(ngModel)]="datosPago.nroTarjeta" class="input-form mb-2">
-        <div class="flex-row">
-          <input type="text" placeholder="Vencimiento (MM/AA)" [(ngModel)]="datosPago.fechaVencTarjeta" class="input-form flex-1 mr-2">
-          <input type="number" placeholder="Cód. Seguridad (CVC)" [(ngModel)]="datosPago.codSeguridadTarjeta" class="input-form flex-1">
+      <!-- Si elige TARJETA, mostramos las tarjetas guardadas -->
+      <div *ngIf="datosPago.tipoPago === 'TARJETA'" class="datos-tarjeta animar-entrada mt-2">
+        <div style="margin-bottom: 20px;">
+          <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #333;">Seleccionar Tarjeta:</label>
+          
+          <!-- Aviso si no tiene tarjetas -->
+          <div *ngIf="misTarjetas.length === 0" style="color: #d9534f; font-size: 14px; margin-bottom: 5px;">
+            No tienes tarjetas registradas. <a routerLink="/cliente/perfil" style="color: #2b4b80; font-weight: bold;">Agrega una en tu perfil</a>
+          </div>
+
+          <!-- Selector con las tarjetas guardadas vinculado a metodoPagoId -->
+          <select [(ngModel)]="datosPago.metodoPagoId" name="metodoPagoId" 
+                  style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" 
+                  [disabled]="misTarjetas.length === 0" required>
+            <option [ngValue]="null" disabled>-- Selecciona una tarjeta guardada --</option>
+            <option *ngFor="let tarjeta of misTarjetas" [ngValue]="tarjeta.metodoPagoId">
+              {{ tarjeta.metodoPagoNombre }} (terminada en {{ tarjeta.numeroTarjeta?.slice(-4) }})
+            </option>
+          </select>
         </div>
       </div>
     </div>

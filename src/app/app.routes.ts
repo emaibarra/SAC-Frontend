@@ -18,7 +18,11 @@ import { ClienteDashboard } from './components/cliente/cliente-dashboard/cliente
 import { GerenteProblemasComponent } from './components/gerente/gerente-problemas/gerente-problemas';
 import { GerenteListaPreciosComponent } from './components/gerente/gerente-lista-precios/gerente-lista-precios';
 import { GerenteReportesComponent } from './components/gerente/gerente-reportes/gerente-reportes';
+
 import { SolicitarTecnico } from './components/cliente/solicitar-tecnico/solicitar-tecnico';
+import { ClienteHistorial } from './components/cliente/cliente-historial/cliente-historial';  
+import { ClienteReclamo } from './components/cliente/cliente-reclamo/cliente-reclamo';
+import { ClientePerfil } from './components/cliente/cliente-perfil/cliente-perfil';
 export const routes: Routes = [
   // Ruta pública
   { path: 'login', component: LoginComponent },
@@ -37,20 +41,8 @@ export const routes: Routes = [
   component: AbmZonaComponent,
   canActivate: [roleGuard],
   data: { rolEsperado: 'ADMINISTRADOR' } 
-},
-
-{ 
-    path: 'cliente/dashboard', 
-    component: ClienteDashboard 
-    // Aquí puedes agregar un Guardia (AuthGuard) verificando que el rol sea 'CLIENTE'
   },
-
-  { 
-    path: 'cliente/solicitar-tecnico', 
-    component: SolicitarTecnico 
-  },
-
-  { 
+    { 
     path: 'admin/provincias', 
     component: AbmProvinciaComponent,
     canActivate: [roleGuard],
@@ -63,6 +55,29 @@ export const routes: Routes = [
     data: { rolEsperado: 'ADMINISTRADOR' } 
   },
   { path: 'admin/tipos-dni', component: AbmTipoDniComponent},
+
+// Rutas protegidas (Solo CLIENTE)
+{ 
+    path: 'cliente/dashboard', 
+    component: ClienteDashboard 
+    // Aquí puedes agregar un Guardia (AuthGuard) verificando que el rol sea 'CLIENTE'
+  },
+
+  { 
+    path: 'cliente/solicitar-tecnico', 
+    component: SolicitarTecnico 
+  },
+{ 
+    path: 'cliente/historial', 
+    component: ClienteHistorial,
+    canActivate: [roleGuard] // Ponle exactamente la misma seguridad que tiene tu dashboard
+  },
+  { 
+  path: 'cliente/reclamo', 
+  component: ClienteReclamo,
+  canActivate: [roleGuard] // O el sistema de seguridad que utilices
+},
+{path:'cliente/perfil', component: ClientePerfil},
 
   // <-- Agregamos la ruta del gerente/empresa
   { path: 'gerente/dashboard', component: DashboardGerenteComponent },

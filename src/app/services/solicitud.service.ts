@@ -37,5 +37,11 @@ getSolicitudesPorTecnicoYEstado(tecnicoId: number, estado: string): Observable<a
     cambiarEstadoSolicitud(solicitudId: number, nuevoEstado: string): Observable<any> {
       return this.http.put(`${this.apiUrl}/${solicitudId}/estado/${nuevoEstado}`, {});
     }
+    getHistorialCliente(clienteId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/cliente/${clienteId}`, { headers: this.getHeaders() });
+  }
+  guardarReclamo(reclamoData: { descripcion: string, solicitudId: number| null }): Observable<any> {
+  return this.http.post<any>('http://localhost:8080/api/reclamos', reclamoData);
+}
   }
 

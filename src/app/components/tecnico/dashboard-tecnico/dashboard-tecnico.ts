@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit,ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TecnicoService } from '../../../services/tecnico.service'; 
@@ -21,6 +21,7 @@ export class DashboardTecnicoComponent implements OnInit {
   private tecnicoService = inject(TecnicoService); 
   private authService = inject(AuthService); 
   private solicitudService = inject(SolicitudService);
+  private changeDetectorRef = inject(ChangeDetectorRef);
 
   miPerfil: any = null;
   estadoActual: string = 'DISPONIBLE';
@@ -58,7 +59,10 @@ export class DashboardTecnicoComponent implements OnInit {
     const idTecnico = this.miPerfil.tecnicoCodigo; 
 
     this.solicitudService.getSolicitudesPorTecnicoYEstado(idTecnico, 'Pendiente')
-      .subscribe(res => this.solicitudesPendientes = res);
+      .subscribe(res => {
+        this.solicitudesPendientes = res;
+        this.changeDetectorRef.detectChanges();
+      });
 
     this.solicitudService.getSolicitudesPorTecnicoYEstado(idTecnico, 'Aceptada')
       .subscribe(res => {

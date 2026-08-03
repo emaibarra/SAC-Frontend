@@ -1,0 +1,111 @@
+<div style="padding: 20px; max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+  
+  <!-- Botón de volver -->
+  <div style="display: flex; justify-content: flex-start; margin-bottom: 20px;">
+    <button routerLink="/cliente/dashboard" 
+            style="background: transparent; color: #2b4b80; border: 1px solid #2b4b80; border-radius: 6px; padding: 8px 15px; cursor: pointer; font-weight: bold; transition: 0.2s;"
+            onmouseover="this.style.background='#2b4b80'; this.style.color='white'"
+            onmouseout="this.style.background='transparent'; this.style.color='#2b4b80'">
+      ⬅ Volver al Inicio
+    </button>
+  </div>
+
+  <!-- FORMULARIO DE DATOS PERSONALES -->
+  <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <h2 style="color: #2b4b80; margin-top: 0; border-bottom: 2px solid #f08a4b; padding-bottom: 10px;">Actualizar Información</h2>
+    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+      Modifica tus datos personales y guarda los cambios.
+    </p>
+
+    <form (submit)="$event.preventDefault(); guardarCambios()">
+      
+      <!-- Nombre -->
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #333;">Nombre completo:</label>
+        <input type="text" [(ngModel)]="cliente.clienteNombre" name="clienteNombre" 
+               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" required>
+      </div>
+
+      <!-- Email -->
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #333;">Correo electrónico:</label>
+        <input type="email" [(ngModel)]="cliente.clienteEmail" name="clienteEmail" 
+               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" required>
+      </div>
+
+      <!-- Teléfono -->
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #333;">Teléfono:</label>
+        <input type="text" [(ngModel)]="cliente.clienteTelefono" name="clienteTelefono" 
+               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+      </div>
+
+      <!-- Botón de guardar perfil -->
+      <button type="submit" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 12px 20px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+        Guardar Cambios de Perfil
+      </button>
+
+    </form>
+  </div>
+
+  <!-- SECCIÓN DE MÉTODOS DE PAGO (Abajo de los datos personales) -->
+  <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 20px;">
+    <h3 style="color: #2b4b80; margin-top: 0; border-bottom: 2px solid #f08a4b; padding-bottom: 10px;">Mis Métodos de Pago</h3>
+
+    <!-- Lista de tarjetas/métodos ya guardados -->
+    <div *ngIf="metodosPago.length === 0" style="color: #6c757d; font-size: 14px; margin-bottom: 15px;">
+      No tienes métodos de pago registrados.
+    </div>
+
+    <ul *ngIf="metodosPago.length > 0" style="list-style: none; padding: 0; margin-bottom: 20px;">
+      <li *ngFor="let m of metodosPago" style="background: #f8f9fa; padding: 12px 15px; border-radius: 6px; margin-bottom: 8px; border: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <strong>{{ m.metodoPagoNombre }}</strong> 
+          <span style="color: #666; margin-left: 10px;" *ngIf="m.numeroTarjeta">•••• •••• •••• {{ m.numeroTarjeta.slice(-4) }}</span>
+          <span style="font-size: 12px; background: #e2e8f0; padding: 3px 6px; border-radius: 4px; margin-left: 10px;" *ngIf="m.fechaVencimiento">Exp: {{ m.fechaVencimiento }}</span>
+        </div>
+        
+        <!-- Botón para eliminar -->
+        <button type="button" (click)="eliminarMetodoPago(m.metodo_pago_Id)" 
+                style="background-color: #ff4d4d; color: white; border: none; border-radius: 4px; padding: 6px 10px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s;"
+                onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+          Eliminar
+        </button>
+      </li>
+    </ul>
+
+    <!-- Formulario para agregar una nueva tarjeta -->
+    <h4 style="color: #333; font-size: 15px; margin-bottom: 10px;">Agregar nueva tarjeta de débito/crédito:</h4>
+    <form (submit)="$event.preventDefault(); agregarMetodoPago()">
+      
+      <!-- Nombre de la tarjeta -->
+      <div style="margin-bottom: 12px;">
+        <input type="text" [(ngModel)]="nuevoMetodo.metodoPagoNombre" name="metodoPagoNombre" 
+               placeholder="Nombre (Ej: Débito Galicia)" 
+               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" required>
+      </div>
+
+      <!-- Número de tarjeta -->
+      <div style="margin-bottom: 12px;">
+        <input type="text" [(ngModel)]="nuevoMetodo.numeroTarjeta" name="numeroTarjeta" 
+               placeholder="Número de tarjeta (16 dígitos)" maxlength="16"
+               style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" required>
+      </div>
+
+      <!-- Vencimiento y CVV en la misma línea -->
+      <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+        <input type="text" [(ngModel)]="nuevoMetodo.fechaVencimiento" name="fechaVencimiento" 
+               placeholder="MM/AA" maxlength="5"
+               style="width: 50%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" required>
+        
+        <input type="password" [(ngModel)]="nuevoMetodo.cvv" name="cvv" 
+               placeholder="CVV / Clave" maxlength="4"
+               style="width: 50%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" required>
+      </div>
+
+      <button type="submit" style="background-color: #f08a4b; color: white; border: none; border-radius: 6px; padding: 10px 15px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+        + Guardar Tarjeta
+      </button>
+    </form>
+
+</div>

@@ -1,0 +1,45 @@
+<div style="padding: 20px; max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+  
+  <!-- Botón de volver -->
+  <div style="display: flex; justify-content: flex-start; margin-bottom: 20px;">
+    <button routerLink="/cliente/dashboard" 
+            style="background: transparent; color: #2b4b80; border: 1px solid #2b4b80; border-radius: 6px; padding: 8px 15px; cursor: pointer; font-weight: bold; transition: 0.2s;"
+            onmouseover="this.style.background='#2b4b80'; this.style.color='white'"
+            onmouseout="this.style.background='transparent'; this.style.color='#2b4b80'">
+      ⬅ Volver al Inicio
+    </button>
+  </div>
+
+  <div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <h2 style="color: #2b4b80; margin-top: 0; border-bottom: 2px solid #f08a4b; padding-bottom: 10px;">Informar un Problema</h2>
+    <p style="color: #666; font-size: 14px; margin-bottom: 20px;">
+      Seleccioná el servicio involucrado y detallanos el inconveniente para que podamos registrarlo.
+    </p>
+
+    <form (submit)="$event.preventDefault(); enviarReclamo()">
+      
+      <!-- Selección de la Solicitud -->
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #333;">Seleccionar Servicio / Solicitud:</label>
+        <select [(ngModel)]="reclamo.solicitudId" name="solicitudId" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+          <option [ngValue]="null" disabled>-- Seleccioná un viaje --</option>
+          <option *ngFor="let sol of misSolicitudes" [ngValue]="sol.solicitudId">
+            Solicitud #{{ sol.solicitudId }} - Fecha: {{ sol.fechaHoraAlta | date:'dd/MM/yyyy HH:mm' }} (${{ sol.solicitudPrecio }})
+          </option>
+        </select>
+      </div>
+
+      <!-- Descripción detallada -->
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-weight: bold; margin-bottom: 8px; color: #333;">Descripción del problema:</label>
+        <textarea [(ngModel)]="reclamo.descripcion" name="descripcion" rows="5" placeholder="Escribí aquí los detalles..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; resize: vertical;"></textarea>
+      </div>
+
+      <!-- Botón de enviar -->
+      <button type="submit" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 12px 20px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+        Guardar Reclamo
+      </button>
+
+    </form>
+  </div>
+</div>

@@ -3,76 +3,88 @@ import { SolicitudService } from '../../../services/solicitud.service';
 import { ProblemaService } from '../../../services/problema.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
 import * as L from 'leaflet';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-solicitar-tecnico',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './solicitar-tecnico.html',
   styleUrl: './solicitar-tecnico.css',
-  
 })
-export class SolicitarTecnico {
+export class SolicitarTecnico implements OnInit {
   private cdr = inject(ChangeDetectorRef);
+  private http = inject(HttpClient);
   pasoActual: number = 1; 
   solicitudLocalizacion: string = '';
   problemasDisponibles: any[] = []; 
   problemasSeleccionados: number[] = [];
   
+  misTarjetas: any[] = [];
   tecnicosDisponibles: any[] = [];
   tecnicoElegido: any = null;
 
+  // 👇 Mantenemos 'EFECTIVO' por defecto y un campo para el ID de tarjeta opcional
   datosPago = {
-    metodoPago: 'EFECTIVO',
-    nroTarjeta: null as number | null,
-    codSeguridadTarjeta: null as number | null,
-    fechaVencTarjeta: ''
+    tipoPago: 'EFECTIVO',      // Puede ser 'EFECTIVO' o 'TARJETA'
+    metodoPagoId: null as number | null
   };
 
-  // Usando inyección moderna tal como hiciste en tu servicio
   private solicitudService = inject(SolicitudService);
   private problemaService = inject(ProblemaService);
 
-  // --- Agregado: Variables del Mapa ---
   private map!: L.Map;
   private marker!: L.Marker;
   private defaultIcon = L.icon({
-    // Usamos las imágenes oficiales alojadas en la nube para evitar conflictos de rutas en Angular
     iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34]
   });
-  // ------------------------------------
 
   ngOnInit(): void {
     this.cargarProblemas();
+    this.cargarTarjetasCliente();
   }
 
-  // Agregado: Inicializamos el mapa una vez que el HTML ya cargó
+  cargarTarjetasCliente(): void {
+    const usuarioString = localStorage.getItem('usuario');
+    if (usuarioString) {
+      const usuario = JSON.parse(usuarioString);
+      const clienteId = usuario.clienteToken || usuario.id || 1;
+
+      this.http.get<any[]>(`http://localhost:8080/api/metodos-pago/cliente/${clienteId}`).subscribe({
+        next: (data) => {
+          this.misTarjetas = data;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error al cargar métodos de pago', err);
+        }
+      });
+    }
+  }
+
   ngAfterViewInit(): void {
     this.initMap();
   }
 
-  // Agregado: Configuración de Leaflet
   private initMap(): void {
-    this.map = L.map('mapa-cliente').setView([-32.889458, -68.845839], 13); // Centrado en Mendoza
+    this.map = L.map('mapa-cliente').setView([-32.889458, -68.845839], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
 
-    // Evento para capturar el clic
     this.map.on('click', (e: L.LeafletMouseEvent) => {
       const lat = e.latlng.lat;
       const lng = e.latlng.lng;
       
-      // Asignamos las coordenadas a tu variable existente
       this.solicitudLocalizacion = `${lat},${lng}`;
       this.cdr.detectChanges(); 
 
-      // Colocamos o movemos el marcador
       if (this.marker) {
         this.marker.setLatLng(e.latlng);
       } else {
@@ -81,26 +93,24 @@ export class SolicitarTecnico {
     });
   }
 
-  // Agregado: Método auxiliar para volver al paso 1 sin que el mapa quede en gris
   volverAlPaso1(): void {
     this.pasoActual = 1;
-    // Dar un respiro al DOM antes de reajustar el tamaño del mapa
     setTimeout(() => {
       if (this.map) this.map.invalidateSize();
     }, 0);
   }
 
   cargarProblemas(): void {
-  this.problemaService.getProblemas().subscribe({
-    next: (data) => {
-      this.problemasDisponibles = data;
-      this.cdr.detectChanges(); // 3. Avisale a Angular que los datos cambiaron
-    },
-    error: (err) => {
-      console.error('Error al cargar', err);
-    }
-  });
-}
+    this.problemaService.getProblemas().subscribe({
+      next: (data) => {
+        this.problemasDisponibles = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar', err);
+      }
+    });
+  }
 
   toggleProblema(id: number): void {
     const index = this.problemasSeleccionados.indexOf(id);
@@ -111,50 +121,47 @@ export class SolicitarTecnico {
     }
   }
 
- buscarTecnicos(): void {
+  buscarTecnicos(): void {
     if (this.problemasSeleccionados.length === 0) {
       alert('Por favor, seleccioná al menos un problema.');
       return;
     }
     
-    // Armamos el objeto con la estructura exacta que espera el DTO del backend
     const requestPayload = {
       problemasIds: this.problemasSeleccionados,
-      coordenadasCliente: this.solicitudLocalizacion 
+      coordenadasCliente: this.solicitudLocalizacion,
+      metodoPagoId: null
     };
     
-    // Enviamos el objeto completo
     this.solicitudService.buscarTecnicos(requestPayload).subscribe({
       next: (tecnicos) => {
-        // 1. Convertimos la ubicación del cliente a un objeto LatLng de Leaflet
         const [latCliente, lngCliente] = this.solicitudLocalizacion.split(',').map(Number);
         const puntoCliente = L.latLng(latCliente, lngCliente);
+        let costoProblemas = 0;
+        
+        this.problemasSeleccionados.forEach(id => {
+          const problemaEncontrado = this.problemasDisponibles.find(p => p.problemaId === id);
+          if (problemaEncontrado && problemaEncontrado.listaPrecio && problemaEncontrado.listaPrecio.precio) {
+            costoProblemas += problemaEncontrado.listaPrecio.precio;
+          }
+        });
 
-        // 2. Mapeamos la lista de técnicos para calcular el precio dinámico de cada uno
         this.tecnicosDisponibles = tecnicos.map((tecnico: any) => {
-          
-          // Usamos las coordenadas del técnico (Aquí aplicamos las hardcodeadas por ahora)
           const latTecnico = -32.8994;
           const lngTecnico = -68.8354;
           const puntoTecnico = L.latLng(latTecnico, lngTecnico);
 
-          // 3. Leaflet calcula la distancia en metros, la pasamos a Kilómetros
           const distanciaMetros = puntoCliente.distanceTo(puntoTecnico);
           const distanciaKm = distanciaMetros / 1000;
 
-          // 4. Obtenemos los valores de la empresa (Con un valor de respaldo por si llegan vacíos)
-          // OJO: Revisa si en tu backend estas variables se llaman así dentro de "empresa"
-          const precioBase = tecnico.empresa?.precioBase || 2000; 
+          const precioBase = tecnico.empresa?.precio || 2000; 
           const precioPorKm = tecnico.empresa?.precioPorKm || 500;
+          const precioCalculado = precioBase + (distanciaKm * precioPorKm) + costoProblemas;
 
-          // 5. Aplicamos la fórmula matemática del precio total
-          const precioCalculado = precioBase + (distanciaKm * precioPorKm);
-
-          // 6. Retornamos el técnico con el nuevo precio modificado y la distancia
           return {
             ...tecnico,
-            distanciaKm: distanciaKm.toFixed(1), // Guardamos los km para que puedas mostrarlos en el HTML
-            precioVar: Math.round(precioCalculado) // Sobreescribimos el 5000 por el precio real redondeado
+            distanciaKm: distanciaKm.toFixed(1),
+            precioVar: Math.round(precioCalculado)
           };
         });
 
@@ -173,53 +180,45 @@ export class SolicitarTecnico {
   }
 
   confirmarSolicitud(): void {
-   // Validamos que haya puesto la dirección
-  if (!this.solicitudLocalizacion || this.solicitudLocalizacion.trim() === '') {
-    alert('Por favor, ingresá la dirección donde te encontrás.');
-    this.pasoActual = 1; // Lo devolvemos al paso 1
-    return;
-  }
-    // 1. Validaciones básicas según el método de pago
-    if (this.datosPago.metodoPago === 'VISA') {
-      if (!this.datosPago.nroTarjeta || !this.datosPago.fechaVencTarjeta || !this.datosPago.codSeguridadTarjeta) {
-        alert('Por favor, completa todos los datos de la tarjeta VISA.');
-        return; // Detenemos la ejecución aquí si faltan datos
-      }
+    if (!this.solicitudLocalizacion || this.solicitudLocalizacion.trim() === '') {
+      alert('Por favor, ingresá la dirección donde te encontrás.');
+      this.pasoActual = 1;
+      return;
     }
 
-    // 2. Preparamos el objeto a enviar
+    // Validamos si eligió tarjeta pero olvidó seleccionarla en la lista
+    if (this.datosPago.tipoPago === 'TARJETA' && !this.datosPago.metodoPagoId) {
+      alert('Por favor, seleccioná una de tus tarjetas guardadas.');
+      return;
+    }
+
+    const usuarioString = localStorage.getItem('usuario');
+    const usuario = usuarioString ? JSON.parse(usuarioString) : null;
+    const clienteIdReal = usuario?.clienteToken || usuario?.id || 1;
+
     const dtoPago: any = {
-      clienteId: 1, // ACORDATE: esto luego lo tenés que sacar de los datos del usuario logueado
+      clienteId: clienteIdReal, 
       tecnicoId: this.tecnicoElegido.tecnicoId,
       precioTotal: this.tecnicoElegido.precioVar,
       problemasIds: this.problemasSeleccionados,
-      metodoPago: this.datosPago.metodoPago,
+      // Si paga en efectivo enviamos null en el ID de tarjeta, si paga con tarjeta enviamos su ID
+      metodoPagoId: this.datosPago.tipoPago === 'EFECTIVO' ? null : this.datosPago.metodoPagoId,
       coordenadasCliente: this.solicitudLocalizacion
     };
 
-    // 3. Solo agregamos los datos de la tarjeta si eligió VISA
-    if (this.datosPago.metodoPago === 'VISA') {
-      dtoPago.nroTarjeta = this.datosPago.nroTarjeta;
-      dtoPago.codSeguridadTarjeta = this.datosPago.codSeguridadTarjeta;
-      dtoPago.fechaVencTarjeta = this.datosPago.fechaVencTarjeta;
-    }
-
-    // 4. Enviamos la petición
     this.solicitudService.confirmarPago(dtoPago).subscribe({
       next: (res) => {
         alert('¡Éxito! ' + (res.mensaje || 'Tu técnico está en camino.'));
         this.pasoActual = 1;
         this.problemasSeleccionados = [];
         this.tecnicoElegido = null;
-        this.solicitudLocalizacion = ''; // Limpiamos la ubicación tras el éxito
+        this.solicitudLocalizacion = '';
         
-        // Removemos el pin del mapa al completar
         if (this.marker) {
           this.map.removeLayer(this.marker);
           this.marker = undefined as any;
         }
-        // Opcional: limpiar también los datos de pago
-        this.datosPago = { metodoPago: 'EFECTIVO', nroTarjeta: null, codSeguridadTarjeta: null, fechaVencTarjeta: '' };
+        this.datosPago = { tipoPago: 'EFECTIVO', metodoPagoId: null };
       },
       error: (err) => {
         alert('Error al procesar la solicitud. Revisá los datos o probá más tarde.');
@@ -228,4 +227,3 @@ export class SolicitarTecnico {
     });
   }
 }
-
