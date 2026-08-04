@@ -53,9 +53,9 @@ export class SolicitarTecnico implements OnInit {
     const usuarioString = localStorage.getItem('usuario');
     if (usuarioString) {
       const usuario = JSON.parse(usuarioString);
-      const clienteId = usuario.clienteToken || usuario.id || 1;
+      const clienteToken = usuario.clienteToken || usuario.id || 1;
 
-      this.http.get<any[]>(`http://localhost:8080/api/metodos-pago/cliente/${clienteId}`).subscribe({
+      this.http.get<any[]>(`http://localhost:8080/api/metodos-pago/cliente/${clienteToken}`).subscribe({
         next: (data) => {
           this.misTarjetas = data;
           this.cdr.detectChanges();

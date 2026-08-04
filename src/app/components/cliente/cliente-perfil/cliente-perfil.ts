@@ -112,11 +112,11 @@ export class ClientePerfil implements OnInit {
       }
     });
   }
-  eliminarMetodoPago(metodoPagoId: number): void {
+  eliminarMetodoPago(metodo_pago_id: number): void {
     if (confirm('¿Estás seguro de que deseas eliminar este método de pago?')) {
       const clienteId = this.cliente.clienteToken;
 
-      this.http.delete(`http://localhost:8080/api/metodos-pago/${metodoPagoId}`).subscribe({
+      this.http.delete(`http://localhost:8080/api/metodos-pago/${metodo_pago_id}`).subscribe({
         next: () => {
           alert('Método de pago eliminado con éxito.');
           // Recargamos la lista para que desaparezca de la pantalla
