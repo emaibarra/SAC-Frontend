@@ -39,7 +39,7 @@ export class ClientePerfil implements OnInit {
     const usuarioString = localStorage.getItem('usuario');
     if (usuarioString) {
       const usuario = JSON.parse(usuarioString);
-      const clienteId = usuario.clienteToken || usuario.id || 1;
+      const clienteId = usuario.clienteToken;
 
       this.http.get<any>(`http://localhost:8080/api/clientes/${clienteId}`).subscribe({
         next: (data) => {
@@ -85,7 +85,7 @@ export class ClientePerfil implements OnInit {
   }
 
   agregarMetodoPago(): void {
-    // 👇 2. Ajustamos la validación para exigir el nombre y el número de tarjeta
+    //  2. Ajustamos la validación para exigir el nombre y el número de tarjeta
     if (!this.nuevoMetodo.metodoPagoNombre.trim() || !this.nuevoMetodo.numeroTarjeta.trim()) {
       alert('Por favor, completa al menos el nombre y el número de la tarjeta.');
       return;
@@ -96,7 +96,7 @@ export class ClientePerfil implements OnInit {
     this.http.post(`http://localhost:8080/api/metodos-pago/cliente/${clienteId}`, this.nuevoMetodo).subscribe({
       next: () => {
         alert('¡Tarjeta guardada con éxito!');
-        // 👇 3. Limpiamos todas las propiedades del formulario de tarjeta
+        // 3. Limpiamos todas las propiedades del formulario de tarjeta
         this.nuevoMetodo = {
           metodoPagoNombre: '',
           numeroTarjeta: '',
