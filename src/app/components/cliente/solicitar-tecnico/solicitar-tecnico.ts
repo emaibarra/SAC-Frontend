@@ -28,7 +28,7 @@ export class SolicitarTecnico implements OnInit {
   tecnicosDisponibles: any[] = [];
   tecnicoElegido: any = null;
 
-  // 👇 Mantenemos 'EFECTIVO' por defecto y un campo para el ID de tarjeta opcional
+  // Mantenemos 'EFECTIVO' por defecto y un campo para el ID de tarjeta opcional
   datosPago = {
     tipoPago: 'EFECTIVO',      // Puede ser 'EFECTIVO' o 'TARJETA'
     metodoPagoId: null as number | null
@@ -56,7 +56,7 @@ export class SolicitarTecnico implements OnInit {
     const usuarioString = localStorage.getItem('usuario');
     if (usuarioString) {
       const usuario = JSON.parse(usuarioString);
-      const clienteToken = usuario.clienteToken || usuario.id || 1;
+      const clienteToken = usuario.clienteToken;
 
       this.http.get<any[]>(`http://localhost:8080/api/metodos-pago/cliente/${clienteToken}`).subscribe({
         next: (data) => {
@@ -198,7 +198,7 @@ export class SolicitarTecnico implements OnInit {
 
     const usuarioString = localStorage.getItem('usuario');
     const usuario = usuarioString ? JSON.parse(usuarioString) : null;
-    const clienteIdReal = usuario?.clienteToken || usuario?.id || 1;
+    const clienteIdReal = usuario?.clienteToken;
 
     const dtoPago: any = {
       clienteId: clienteIdReal, 
@@ -206,7 +206,7 @@ export class SolicitarTecnico implements OnInit {
       precioTotal: this.tecnicoElegido.precioVar,
       problemasIds: this.problemasSeleccionados,
       // Si paga en efectivo enviamos null en el ID de tarjeta, si paga con tarjeta enviamos su ID
-      metodoPagoId: this.datosPago.tipoPago === 'EFECTIVO' ? null : this.datosPago.metodoPagoId,
+      metodoPago: this.datosPago.tipoPago === 'EFECTIVO' ? null : this.datosPago.metodoPagoId,
       coordenadasCliente: this.solicitudLocalizacion
     };
 

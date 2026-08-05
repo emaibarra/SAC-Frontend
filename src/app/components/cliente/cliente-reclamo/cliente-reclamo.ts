@@ -28,11 +28,11 @@ export class ClienteReclamo implements OnInit {
 
   cargarSolicitudesCliente(): void {
     const usuarioString = localStorage.getItem('usuario');
-    let clienteId = 1;
+    let clienteId = null;
 
     if (usuarioString) {
       const usuario = JSON.parse(usuarioString);
-      clienteId = usuario.clienteToken || usuario.id || 1;
+      clienteId = usuario.clienteToken;
     }
 
     // Traemos el historial para que el usuario elija sobre qué viaje reclama

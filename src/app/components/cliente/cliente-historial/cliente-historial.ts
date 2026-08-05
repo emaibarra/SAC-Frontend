@@ -22,11 +22,11 @@ export class ClienteHistorial implements OnInit {
   cargarHistorial(): void {
     // 1. Buscamos al usuario en el localStorage correctamente
     const usuarioString = localStorage.getItem('usuario'); 
-    let clienteId = 1; 
+    let clienteId = null; 
     
     if (usuarioString) {
       const usuario = JSON.parse(usuarioString);
-      clienteId = usuario.clienteToken || usuario.id || 1; 
+      clienteId = usuario.clienteToken; 
     }
 
     // 2. Llamamos al servicio

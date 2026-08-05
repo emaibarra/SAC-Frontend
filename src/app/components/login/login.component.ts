@@ -86,6 +86,13 @@ export class LoginComponent {
       next: (respuesta) => {
         localStorage.setItem('token', respuesta.token);
         localStorage.setItem('rol', respuesta.rol);
+
+        // NUEVO: Guardamos el ID real del cliente en el LocalStorage
+        localStorage.setItem('usuario', JSON.stringify({
+          identificador: respuesta.identificador,
+          clienteToken: respuesta.clienteToken
+        }));
+
         // Redirigir al dashboard del cliente
         this.router.navigate(['/cliente/dashboard']);
       },
