@@ -1,17 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { GerenteListaPreciosComponent } from './gerente-lista-precios';
 
-import { GerenteListaPrecios } from './gerente-lista-precios';
-
-describe('GerenteListaPrecios', () => {
-  let component: GerenteListaPrecios;
-  let fixture: ComponentFixture<GerenteListaPrecios>;
+describe('GerenteListaPreciosComponent', () => {
+  let component: GerenteListaPreciosComponent;
+  let fixture: ComponentFixture<GerenteListaPreciosComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GerenteListaPrecios],
+      imports: [GerenteListaPreciosComponent],
+      providers: [provideRouter([])]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(GerenteListaPrecios);
+    fixture = TestBed.createComponent(GerenteListaPreciosComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

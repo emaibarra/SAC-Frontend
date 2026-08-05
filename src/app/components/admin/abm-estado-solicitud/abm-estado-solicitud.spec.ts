@@ -1,17 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { AbmEstadoSolicitudComponent } from './abm-estado-solicitud';
 
-import { AbmEstadoSolicitud } from './abm-estado-solicitud';
-
-describe('AbmEstadoSolicitud', () => {
-  let component: AbmEstadoSolicitud;
-  let fixture: ComponentFixture<AbmEstadoSolicitud>;
+describe('AbmEstadoSolicitudComponent', () => {
+  let component: AbmEstadoSolicitudComponent;
+  let fixture: ComponentFixture<AbmEstadoSolicitudComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AbmEstadoSolicitud],
+      imports: [AbmEstadoSolicitudComponent],
+      providers: [provideRouter([])]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AbmEstadoSolicitud);
+    fixture = TestBed.createComponent(AbmEstadoSolicitudComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

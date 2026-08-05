@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideRouter } from '@angular/router';
 import { ClienteHistorial } from './cliente-historial';
 
 describe('ClienteHistorial', () => {
@@ -8,7 +8,8 @@ describe('ClienteHistorial', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ClienteHistorial]
+      imports: [ClienteHistorial],
+      providers: [provideRouter([])]
     })
     .compileComponents();
 

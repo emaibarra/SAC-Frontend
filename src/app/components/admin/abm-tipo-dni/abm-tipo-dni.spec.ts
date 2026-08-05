@@ -1,17 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { AbmTipoDniComponent } from './abm-tipo-dni';
 
-import { AbmTipoDni } from './abm-tipo-dni';
-
-describe('AbmTipoDni', () => {
-  let component: AbmTipoDni;
-  let fixture: ComponentFixture<AbmTipoDni>;
+describe('AbmTipoDniComponent', () => {
+  let component: AbmTipoDniComponent;
+  let fixture: ComponentFixture<AbmTipoDniComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AbmTipoDni],
+      imports: [AbmTipoDniComponent],
+      providers: [provideRouter([])]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AbmTipoDni);
+    fixture = TestBed.createComponent(AbmTipoDniComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

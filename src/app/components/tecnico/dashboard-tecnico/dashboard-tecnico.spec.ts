@@ -1,17 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { DashboardTecnicoComponent } from './dashboard-tecnico';
 
-import { DashboardTecnico } from './dashboard-tecnico';
-
-describe('DashboardTecnico', () => {
-  let component: DashboardTecnico;
-  let fixture: ComponentFixture<DashboardTecnico>;
+describe('DashboardTecnicoComponent', () => {
+  let component: DashboardTecnicoComponent;
+  let fixture: ComponentFixture<DashboardTecnicoComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DashboardTecnico],
+      imports: [DashboardTecnicoComponent],
+      providers: [provideRouter([])]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(DashboardTecnico);
+    fixture = TestBed.createComponent(DashboardTecnicoComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

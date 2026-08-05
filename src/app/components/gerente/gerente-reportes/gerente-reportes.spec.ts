@@ -1,17 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { GerenteReportesComponent } from './gerente-reportes';
 
-import { GerenteReportes } from './gerente-reportes';
-
-describe('GerenteReportes', () => {
-  let component: GerenteReportes;
-  let fixture: ComponentFixture<GerenteReportes>;
+describe('GerenteReportesComponent', () => {
+  let component: GerenteReportesComponent;
+  let fixture: ComponentFixture<GerenteReportesComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GerenteReportes],
+      imports: [GerenteReportesComponent],
+      providers: [provideRouter([])]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(GerenteReportes);
+    fixture = TestBed.createComponent(GerenteReportesComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
