@@ -1,10 +1,9 @@
 <div style="padding: 40px 20px; font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; text-align: center;">
-  
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
-    <div style="width: 80px;"></div> <h1 style="color: #f08a4b; font-style: italic; font-weight: bold; margin: 0; font-size: 32px; letter-spacing: 2px;">
+    <div style="width: 80px;"></div> 
+    <h1 style="color: #f08a4b; font-style: italic; font-weight: bold; margin: 0; font-size: 32px; letter-spacing: 2px;">
       SAC
     </h1>
-    
     <button (click)="cerrarSesion()" style="background: transparent; color: #dc3545; border: 1px solid #dc3545; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 12px; font-weight: bold;">
       Salir
     </button>
@@ -13,22 +12,72 @@
   <h3 style="color: #2b4b80; margin-bottom: 30px; font-weight: bold;">¡Bienvenido de vuelta!</h3>
 
   <div style="display: flex; flex-direction: column; gap: 15px;">
-    
     <button class="btn-principal" routerLink="/cliente/solicitar-tecnico" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
       Solicitar Técnico
     </button>
-    
     <button routerLink="/cliente/perfil" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
       Actualizar Información
     </button>
-    
     <button routerLink="/cliente/historial" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
       Historial de Solicitudes
     </button>
-    
     <button routerLink="/cliente/reclamo" style="background-color: #2b4b80; color: white; border: none; border-radius: 6px; padding: 18px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
       Informar de un problema
     </button>
+  </div>
+</div>
 
+<!-- ======================================================== -->
+<!-- OVERLAY SEGUIMIENTO ESTILO UBER (VIAJE ACTIVO)           -->
+<!-- ======================================================== -->
+<div class="sac-overlay" *ngIf="solicitudActiva">
+  <div class="sac-modal">
+    <h3 style="text-align: center; color: #2b4b80; margin-top: 0;">Asistencia en curso</h3>
+    
+    <!-- Mapa embebido de Leaflet -->
+    <div class="sac-map-container">
+      <div id="mapa-seguimiento-cliente" style="height: 200px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+    </div>
+
+    <!-- Datos de la solicitud -->
+    <div style="margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #f08a4b; text-align: left;">
+      <p style="margin: 5px 0;"><strong>Técnico:</strong> {{ solicitudActiva.tecnico?.tecnicoNombre || 'Buscando...' }}</p>
+      <p style="margin: 5px 0;"><strong>Empresa:</strong> {{ solicitudActiva.tecnico?.empresa?.empresaNombre || 'Asignando...' }}</p>
+      <p style="margin: 5px 0;"><strong>Estado:</strong> <span style="color: #d84315; font-weight: bold;">{{ solicitudActiva.estadoSolicitud?.estadoNombre }}</span></p>
+      <hr style="border-top: 1px solid #ddd; margin: 10px 0;">
+      <h4 style="margin: 5px 0; color: #2b4b80; text-align: right;">Total estimado: ${{ solicitudActiva.solicitudPrecio }}</h4>
+    </div>
+
+    <!-- Botón Cancelar -->
+    <button style="width: 100%; padding: 15px; background: #dc3545; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.3s;" 
+            onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'" 
+            (click)="cancelarViaje()">
+      Cancelar Solicitud
+    </button>
+  </div>
+</div>
+
+<!-- ======================================================== -->
+<!-- OVERLAY CALIFICACIÓN 5 ESTRELLAS (VIAJE FIN)             -->
+<!-- ======================================================== -->
+<div class="sac-overlay" *ngIf="solicitudParaCalificar">
+  <div class="sac-modal" style="text-align: center;">
+    <h2 style="color: #28a745; margin-top: 0;">¡Trabajo Concluido!</h2>
+    <p style="color: #555;">Califica la atención brindada por <strong>{{ solicitudParaCalificar.tecnico?.tecnicoNombre }}</strong></p>
+    
+    <div style="font-size: 3.5rem; cursor: pointer; margin: 20px 0; display: flex; justify-content: center; gap: 10px;">
+      <span *ngFor="let star of [1, 2, 3, 4, 5]" 
+            (click)="seleccionarEstrella(star)"
+            [ngStyle]="{'color': star <= estrellasSeleccionadas ? '#ffc107' : '#e4e5e9', 'transition': 'color 0.2s'}">
+        &#9733;
+      </span>
+    </div>
+
+    <button style="width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s;" 
+            [disabled]="estrellasSeleccionadas === 0" 
+            [ngStyle]="{'opacity': estrellasSeleccionadas === 0 ? '0.5' : '1'}"
+            (click)="enviarResena()">
+      Enviar Reseña
+    </button>
   </div>
 </div>

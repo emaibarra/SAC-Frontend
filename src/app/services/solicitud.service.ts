@@ -43,5 +43,8 @@ getSolicitudesPorTecnicoYEstado(tecnicoId: number, estado: string): Observable<a
   guardarReclamo(reclamoData: { descripcion: string, solicitudId: number| null }): Observable<any> {
   return this.http.post<any>('http://localhost:8080/api/reclamos', reclamoData);
 }
+calificarSolicitud(id: number, estrellas: number): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/calificar/${estrellas}`, {}, { headers: this.getHeaders() });
+  }
   }
 

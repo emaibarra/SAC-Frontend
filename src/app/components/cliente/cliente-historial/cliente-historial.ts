@@ -5,11 +5,13 @@ import { SolicitudService } from '../../../services/solicitud.service';
 
 @Component({
   selector: 'app-cliente-historial',
+  standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './cliente-historial.html'
 })
 export class ClienteHistorial implements OnInit {
   solicitudes: any[] = [];
+  
   private solicitudService = inject(SolicitudService);
   private changeDetectorRef = inject(ChangeDetectorRef);
 
@@ -18,26 +20,32 @@ export class ClienteHistorial implements OnInit {
   }
 
   cargarHistorial(): void {
-    // 1. Buscamos al usuario en el localStorage (como hiciste en el botón de cerrar sesión)
-    const usuarioString = localStorage.getItem('clienteToken'); // Asegúrate de que este sea el nombre correcto de la clave
-    let clienteId = 1; // Dejamos el 1 de respaldo
-
+    // 1. Buscamos al usuario en el localStorage correctamente
+    const usuarioString = localStorage.getItem('usuario'); 
+    let clienteId = 1; 
+    
     if (usuarioString) {
       const usuario = JSON.parse(usuarioString);
-      // 👇 REVISA ESTO: Pon el nombre exacto de la variable de tu ID (puede ser id, clienteToken, etc.)
       clienteId = usuario.clienteToken || usuario.id || 1; 
     }
 
-    // 2. Llamamos al servicio con el ID real
+    // 2. Llamamos al servicio
     this.solicitudService.getHistorialCliente(clienteId).subscribe({
       next: (data) => {
+        // Ordenamos para que las más recientes salgan arriba
+        data.sort((a, b) => b.solicitudId - a.solicitudId);
         this.solicitudes = data;
-        this.changeDetectorRef.detectChanges(); // Forzamos la detección de cambios
-        console.log("Historial recibido:", data); // Agregamos un log para espiar qué llega
+        this.changeDetectorRef.detectChanges(); 
       },
       error: (err) => {
         console.error('Error al cargar el historial', err);
       }
     });
+  }
+
+  // --- NUEVO: Helper para dibujar las estrellas en el HTML ---
+  getArrayEstrellas(calificacion: number): number[] {
+    if (!calificacion || calificacion <= 0) return [];
+    return Array(calificacion).fill(0); // Devuelve un array del tamaño de la calificación
   }
 }

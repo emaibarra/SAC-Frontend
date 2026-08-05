@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -16,6 +16,7 @@ export class AbmEstadoSolicitudComponent implements OnInit {
   nuevoEstado: any = { estadoNombre: '', estadoDescripcion: '' };
 
   private estadoService = inject(EstadoSolicitudService);
+  private cdr = inject(ChangeDetectorRef); // <-- INYECTADO
 
   ngOnInit(): void {
     this.cargarEstados();
@@ -24,6 +25,7 @@ export class AbmEstadoSolicitudComponent implements OnInit {
   cargarEstados(): void {
     this.estadoService.getEstados().subscribe({
       next: (data) => this.estados = data,
+      
       error: (err) => console.error('Error al cargar los estados', err)
     });
   }

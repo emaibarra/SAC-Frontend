@@ -4,6 +4,7 @@ import { ProblemaService } from '../../../services/problema.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
+
 import * as L from 'leaflet';
 import { HttpClient } from '@angular/common/http';
 
@@ -16,6 +17,8 @@ import { HttpClient } from '@angular/common/http';
 export class SolicitarTecnico implements OnInit {
   private cdr = inject(ChangeDetectorRef);
   private http = inject(HttpClient);
+  private router = inject(Router);
+  
   pasoActual: number = 1; 
   solicitudLocalizacion: string = '';
   problemasDisponibles: any[] = []; 
@@ -165,7 +168,8 @@ export class SolicitarTecnico implements OnInit {
           };
         });
 
-        this.pasoActual = 2; 
+        this.pasoActual = 2;
+        this.cdr.detectChanges(); 
       },
       error: (err) => {
         alert('Hubo un error al buscar técnicos. Intentá nuevamente.');
@@ -209,10 +213,8 @@ export class SolicitarTecnico implements OnInit {
     this.solicitudService.confirmarPago(dtoPago).subscribe({
       next: (res) => {
         alert('¡Éxito! ' + (res.mensaje || 'Tu técnico está en camino.'));
-        this.pasoActual = 1;
-        this.problemasSeleccionados = [];
-        this.tecnicoElegido = null;
-        this.solicitudLocalizacion = '';
+        
+        this.router.navigate(['/cliente/dashboard']);
         
         if (this.marker) {
           this.map.removeLayer(this.marker);

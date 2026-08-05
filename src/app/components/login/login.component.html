@@ -22,6 +22,10 @@
         Continuar
       </button>
 
+      <div *ngIf="errorLogin" style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; text-align: center; margin-top: 5px;">
+        <b>ERROR:</b> {{ errorLogin }}
+      </div>
+      
     </form>
 
     <div style="margin-top: 25px;">
@@ -51,6 +55,8 @@
         <button style="width: 100%; padding: 15px; background: var(--color-azul-oscuro); color: white; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 15px; transition: 0.3s;" onmouseover="this.style.backgroundColor='var(--color-azul-medio)'" onmouseout="this.style.backgroundColor='var(--color-azul-oscuro)'" (click)="iniciarSesionClienteTelefono()">
           Continuar
         </button>
+
+        
       </div>
 
       <div style="display: flex; align-items: center; text-align: center; margin: 5px 0;">
