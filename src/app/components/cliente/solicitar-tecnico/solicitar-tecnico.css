@@ -239,7 +239,12 @@ h2 {
 .animar-entrada {
   animation: fadeIn 0.3s ease-in-out;
 }
-
+.boton-apagado {
+  opacity: 0.5; /* Lo hace ver transparente/apagado */
+  cursor: not-allowed; /* Cambia la flecha del mouse por un ícono de prohibido */
+  /* Si tu botón tiene un efecto hover, puedes anularlo aquí */
+  pointer-events: auto; /* Asegura que el clic siga funcionando */
+}
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }

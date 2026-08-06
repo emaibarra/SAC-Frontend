@@ -23,7 +23,6 @@ export class ClientePerfil implements OnInit {
 
   metodosPago: any[] = [];
   
-  // 👇 1. Actualizamos este objeto con los nuevos campos de la tarjeta
   nuevoMetodo = {
     metodoPagoNombre: '',
     numeroTarjeta: '',
@@ -32,33 +31,62 @@ export class ClientePerfil implements OnInit {
   };
 
   ngOnInit(): void {
-    this.cargarDatosCliente();
+    // Al iniciar el componente, ejecutamos la carga inicial
+    this.inicializarPerfil();
   }
 
-  cargarDatosCliente(): void {
+  inicializarPerfil(): void {
     const usuarioString = localStorage.getItem('usuario');
+    
     if (usuarioString) {
-      const usuario = JSON.parse(usuarioString);
-      const clienteId = usuario.clienteToken;
+      try {
+        const usuario = JSON.parse(usuarioString);
+        // Soportamos tanto clienteToken como id por seguridad
+        const clienteId = usuario.clienteToken || usuario.id; 
 
-      this.http.get<any>(`http://localhost:8080/api/clientes/${clienteId}`).subscribe({
-        next: (data) => {
-          this.cliente = data;
-          this.cargarMetodosPago(clienteId);
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          this.cliente = {
-            clienteToken: clienteId,
-            clienteNombre: usuario.clienteNombre || usuario.nombre || '',
-            clienteEmail: usuario.clienteEmail || usuario.email || '',
-            clienteTelefono: usuario.clienteTelefono || usuario.telefono || ''
-          };
-          this.cargarMetodosPago(clienteId);
-          this.cdr.detectChanges();
+        if (clienteId) {
+          // Asignamos de entrada el token para que nunca viaje como nulo
+          this.cliente.clienteToken = clienteId;
+          
+          // Disparamos la carga de datos desde el backend
+          this.cargarDatosCliente(clienteId);
+        } else {
+          console.warn('No se encontró un ID de cliente válido en el localStorage.');
         }
-      });
+      } catch (e) {
+        console.error('Error al parsear el usuario del localStorage', e);
+      }
+    } else {
+      console.warn('No hay sesión activa en el localStorage.');
     }
+  }
+
+  cargarDatosCliente(clienteId: number): void {
+    this.http.get<any>(`http://localhost:8080/api/clientes/${clienteId}`).subscribe({
+      next: (data) => {
+        this.cliente = data;
+        // Nos aseguramos de mantener el token asignado
+        if (!this.cliente.clienteToken) {
+          this.cliente.clienteToken = clienteId as any;
+        }
+        this.cargarMetodosPago(clienteId);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        // Fallback si la API de clientes falla, usamos lo que teníamos en storage
+        const usuarioString = localStorage.getItem('usuario');
+        const usuario = usuarioString ? JSON.parse(usuarioString) : {};
+        
+        this.cliente = {
+          clienteToken: clienteId as any,
+          clienteNombre: usuario.clienteNombre || usuario.nombre || '',
+          clienteEmail: usuario.clienteEmail || usuario.email || '',
+          clienteTelefono: usuario.clienteTelefono || usuario.telefono || ''
+        };
+        this.cargarMetodosPago(clienteId);
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   cargarMetodosPago(clienteId: number): void {
@@ -66,11 +94,19 @@ export class ClientePerfil implements OnInit {
       next: (data) => {
         this.metodosPago = data;
         this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar métodos de pago', err);
       }
     });
   }
 
   guardarCambios(): void {
+    if (!this.cliente.clienteToken) {
+      alert('Error: No hay un ID de cliente válido.');
+      return;
+    }
+
     this.http.put(`http://localhost:8080/api/clientes/${this.cliente.clienteToken}`, this.cliente).subscribe({
       next: (response: any) => {
         alert('¡Información actualizada con éxito!');
@@ -85,7 +121,11 @@ export class ClientePerfil implements OnInit {
   }
 
   agregarMetodoPago(): void {
-    //  2. Ajustamos la validación para exigir el nombre y el número de tarjeta
+    if (!this.cliente || !this.cliente.clienteToken) {
+      alert('Error: No se encontró la sesión del cliente. Por favor, vuelve a iniciar sesión.');
+      return;
+    }
+
     if (!this.nuevoMetodo.metodoPagoNombre.trim() || !this.nuevoMetodo.numeroTarjeta.trim()) {
       alert('Por favor, completa al menos el nombre y el número de la tarjeta.');
       return;
@@ -96,14 +136,13 @@ export class ClientePerfil implements OnInit {
     this.http.post(`http://localhost:8080/api/metodos-pago/cliente/${clienteId}`, this.nuevoMetodo).subscribe({
       next: () => {
         alert('¡Tarjeta guardada con éxito!');
-        // 3. Limpiamos todas las propiedades del formulario de tarjeta
         this.nuevoMetodo = {
           metodoPagoNombre: '',
           numeroTarjeta: '',
           fechaVencimiento: '',
           cvv: ''
         };
-        this.cargarMetodosPago(clienteId!);
+        this.cargarMetodosPago(clienteId);
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -112,6 +151,7 @@ export class ClientePerfil implements OnInit {
       }
     });
   }
+
   eliminarMetodoPago(metodo_pago_id: number): void {
     if (confirm('¿Estás seguro de que deseas eliminar este método de pago?')) {
       const clienteId = this.cliente.clienteToken;
@@ -119,7 +159,6 @@ export class ClientePerfil implements OnInit {
       this.http.delete(`http://localhost:8080/api/metodos-pago/${metodo_pago_id}`).subscribe({
         next: () => {
           alert('Método de pago eliminado con éxito.');
-          // Recargamos la lista para que desaparezca de la pantalla
           this.cargarMetodosPago(clienteId!);
           this.cdr.detectChanges();
         },

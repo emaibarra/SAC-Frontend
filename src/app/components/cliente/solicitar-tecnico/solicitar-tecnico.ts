@@ -125,9 +125,10 @@ export class SolicitarTecnico implements OnInit {
   }
 
   buscarTecnicos(): void {
-    if (this.problemasSeleccionados.length === 0) {
-      alert('Por favor, seleccioná al menos un problema.');
-      return;
+    // Validamos si falta seleccionar un problema o la ubicación
+  if (this.problemasSeleccionados.length === 0 || !this.solicitudLocalizacion) {
+    alert('Por favor, selecciona al menos un problema y tu ubicación en el mapa antes de continuar.');
+    return; // Corta la ejecución de la función aquí mismo
     }
     
     const requestPayload = {

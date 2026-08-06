@@ -32,12 +32,11 @@
       
 
     </div>
-
-    <button class="btn-principal mt-3" 
-            [disabled]="problemasSeleccionados.length === 0 || !solicitudLocalizacion" 
-            (click)="buscarTecnicos()">
-      Buscar Técnico Cercano
-    </button>
+<button class="btn-principal mt-3" 
+        [ngClass]="{'boton-apagado': problemasSeleccionados.length === 0 || !solicitudLocalizacion}"
+        (click)="buscarTecnicos()">
+  Buscar Técnico Cercano
+</button>
   </div>
 
 
