@@ -23,4 +23,7 @@ export class EmpresaService {
   eliminarEmpresa(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
+  actualizarEmpresa(id: number, empresa: any) {
+  return this.http.put(`${this.apiUrl}/${id}`, empresa);
+}
 }
