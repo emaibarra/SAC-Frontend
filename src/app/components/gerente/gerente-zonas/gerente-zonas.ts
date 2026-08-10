@@ -20,7 +20,8 @@ export class GerenteZonasComponent implements OnInit {
   nuevaZonaEmpresa = {
     zonaEmpresaNombre: '',
     empresa: { empresaId: null as number | null },
-    zona: { zonaId: null as number | null }
+    zona: { zonaId: null as number | null },
+    precioPorKm: null as number | null
   };
 
   private zonaEmpresaService = inject(ZonaEmpresaService);
@@ -66,6 +67,7 @@ export class GerenteZonasComponent implements OnInit {
         this.cargarMisZonas();
         this.nuevaZonaEmpresa.zonaEmpresaNombre = '';
         this.nuevaZonaEmpresa.zona.zonaId = null;
+        this.nuevaZonaEmpresa.precioPorKm = null;
       },
       error: (err) => alert('Error al guardar: ' + err.message)
     });

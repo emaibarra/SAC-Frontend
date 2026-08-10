@@ -126,9 +126,9 @@ export class SolicitarTecnico implements OnInit {
 
   buscarTecnicos(): void {
     // Validamos si falta seleccionar un problema o la ubicación
-  if (this.problemasSeleccionados.length === 0 || !this.solicitudLocalizacion) {
-    alert('Por favor, selecciona al menos un problema y tu ubicación en el mapa antes de continuar.');
-    return; // Corta la ejecución de la función aquí mismo
+    if (this.problemasSeleccionados.length === 0 || !this.solicitudLocalizacion) {
+      alert('Por favor, selecciona al menos un problema y tu ubicación en el mapa antes de continuar.');
+      return; 
     }
     
     const requestPayload = {
@@ -151,8 +151,20 @@ export class SolicitarTecnico implements OnInit {
         });
 
         this.tecnicosDisponibles = tecnicos.map((tecnico: any) => {
-          const latTecnico = -32.8994;
-          const lngTecnico = -68.8354;
+          
+          // --- INICIO DE LA MODIFICACIÓN ---
+          // Valores por defecto por si la empresa aún no tiene coordenadas guardadas
+          let latTecnico = -32.8994;
+          let lngTecnico = -68.8354;
+
+          // Verificamos si el técnico tiene empresa y si esa empresa tiene coordenadas
+          if (tecnico.empresa && tecnico.empresa.coordenadas) {
+            const coordsEmpresa = tecnico.empresa.coordenadas.split(',');
+            latTecnico = parseFloat(coordsEmpresa[0]);
+            lngTecnico = parseFloat(coordsEmpresa[1]);
+          }
+          // --- FIN DE LA MODIFICACIÓN ---
+
           const puntoTecnico = L.latLng(latTecnico, lngTecnico);
 
           const distanciaMetros = puntoCliente.distanceTo(puntoTecnico);
