@@ -25,4 +25,7 @@ export class ZonaEmpresaService {
   eliminarZonaEmpresa(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
+  actualizarZonaEmpresa(id: number, zonaEmpresa: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, zonaEmpresa, { headers: this.getHeaders() });
+  }
 }

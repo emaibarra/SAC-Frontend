@@ -16,8 +16,11 @@ export class GerenteZonasComponent implements OnInit {
   
   zonasGlobales: any[] = [];
   misZonasEmpresa: any[] = [];
-  
+  modoEdicion = false;
+
+  // Actualizamos el objeto base para incluir el ID
   nuevaZonaEmpresa = {
+    zonaEmpresaId: null as number | null,
     zonaEmpresaNombre: '',
     empresa: { empresaId: null as number | null },
     zona: { zonaId: null as number | null },
@@ -56,21 +59,52 @@ export class GerenteZonasComponent implements OnInit {
   }
 
   guardarZonaEmpresa(): void {
-    if (!this.nuevaZonaEmpresa.zona.zonaId || !this.nuevaZonaEmpresa.zonaEmpresaNombre) {
+    if (!this.nuevaZonaEmpresa.zona.zonaId || !this.nuevaZonaEmpresa.zonaEmpresaNombre || this.nuevaZonaEmpresa.precioPorKm === null) {
       alert('Completa todos los campos');
       return;
     }
 
-    this.zonaEmpresaService.crearZonaEmpresa(this.nuevaZonaEmpresa).subscribe({
-      next: () => {
-        alert('Zona vinculada con éxito a tu empresa.');
-        this.cargarMisZonas();
-        this.nuevaZonaEmpresa.zonaEmpresaNombre = '';
-        this.nuevaZonaEmpresa.zona.zonaId = null;
-        this.nuevaZonaEmpresa.precioPorKm = null;
-      },
-      error: (err) => alert('Error al guardar: ' + err.message)
-    });
+    if (this.modoEdicion && this.nuevaZonaEmpresa.zonaEmpresaId) {
+      this.zonaEmpresaService.actualizarZonaEmpresa(this.nuevaZonaEmpresa.zonaEmpresaId, this.nuevaZonaEmpresa).subscribe({
+        next: () => {
+          this.cargarMisZonas();
+          this.cancelarEdicion();
+        },
+        error: (err) => alert('Error al actualizar: ' + err.message)
+      });
+    } else {
+      this.zonaEmpresaService.crearZonaEmpresa(this.nuevaZonaEmpresa).subscribe({
+        next: () => {
+          alert('Zona vinculada con éxito a tu empresa.');
+          this.cargarMisZonas();
+          this.cancelarEdicion();
+        },
+        error: (err) => alert('Error al guardar: ' + err.message)
+      });
+    }
+  }
+
+  editarZonaEmpresa(ze: any): void {
+    this.modoEdicion = true;
+    this.nuevaZonaEmpresa = {
+      zonaEmpresaId: ze.zonaEmpresaId,
+      zonaEmpresaNombre: ze.zonaEmpresaNombre,
+      empresa: { empresaId: ze.empresa?.empresaId },
+      zona: { zonaId: ze.zona?.zonaId },
+      precioPorKm: ze.precioPorKm
+    };
+  }
+
+  cancelarEdicion(): void {
+    this.modoEdicion = false;
+    const usuario = this.authService.getUsuarioActual();
+    this.nuevaZonaEmpresa = {
+      zonaEmpresaId: null,
+      zonaEmpresaNombre: '',
+      empresa: { empresaId: usuario?.empresaId || null },
+      zona: { zonaId: null },
+      precioPorKm: null
+    };
   }
 
   eliminarZonaEmpresa(id: number): void {

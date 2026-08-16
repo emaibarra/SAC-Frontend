@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -13,6 +13,7 @@ import { HttpClient } from '@angular/common/http';
 export class ClientePerfil implements OnInit {
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
 
   cliente = {
     clienteToken: null,
@@ -165,6 +166,31 @@ export class ClientePerfil implements OnInit {
         error: (err) => {
           console.error('Error al eliminar método de pago', err);
           alert('Hubo un error al intentar eliminar la tarjeta.');
+        }
+      });
+    }
+  }
+  darseDeBaja(): void {
+    // 1. Mostramos la alerta de confirmación
+    if (confirm('¿Estás totalmente seguro de que deseas darte de baja? Esta acción no se puede deshacer y perderás tu historial.')) {
+      
+      const clienteId = this.cliente.clienteToken;
+      if (!clienteId) return;
+
+      // 2. Si acepta, llamamos al nuevo endpoint de eliminación
+      this.http.delete(`http://localhost:8080/api/clientes/${clienteId}`).subscribe({
+        next: () => {
+          alert('Tu cuenta ha sido eliminada exitosamente. ¡Esperamos verte pronto!');
+          
+          // 3. Limpiamos los datos de sesión y lo mandamos al login
+          localStorage.removeItem('token');
+          localStorage.removeItem('rol');
+          localStorage.removeItem('usuario');
+          this.router.navigate(['/login']);
+        },
+        error: (err) => {
+          console.error('Error al dar de baja', err);
+          alert('Hubo un problema al intentar eliminar tu cuenta. Verifica si tienes solicitudes activas.');
         }
       });
     }
