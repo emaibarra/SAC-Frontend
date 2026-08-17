@@ -10,7 +10,13 @@
         Estado: {{ estadoActual }}
       </span>
       <br>
-      <button class="btn btn-outline-danger btn-sm shadow-sm" (click)="cerrarSesion()">Cerrar Sesión</button>
+      <div class="d-flex gap-2 justify-content-end mt-2">
+        <!-- BOTÓN HISTORIAL AGREGADO AQUÍ -->
+        <button class="btn btn-outline-primary btn-sm shadow-sm" (click)="irAlHistorial()">
+          📚 Mi Historial
+        </button>
+        <button class="btn btn-outline-danger btn-sm shadow-sm" (click)="cerrarSesion()">Cerrar Sesión</button>
+      </div>
     </div>
   </div>
 

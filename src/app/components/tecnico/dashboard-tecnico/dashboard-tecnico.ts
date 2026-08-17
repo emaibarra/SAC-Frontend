@@ -146,7 +146,10 @@ export class DashboardTecnicoComponent implements OnInit {
   cambiarEstado(nuevoEstado: string): void {
     this.estadoActual = nuevoEstado;
   }
-
+irAlHistorial(): void {
+    // Asegúrate de que la ruta coincida con la que definiste en app.routes.ts
+    this.router.navigate(['/tecnico/historial']); 
+  }
   cerrarSesion(): void {
     if (confirm('¿Estás seguro de que deseas cerrar sesión? Dejarás de recibir alertas.')) {
       localStorage.removeItem('token');

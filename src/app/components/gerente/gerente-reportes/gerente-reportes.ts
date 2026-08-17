@@ -1,8 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http'; // Añadido para consumir el nuevo reporte
 import { TecnicoService } from '../../../services/tecnico.service';
-import { ProblemaService } from '../../../services/problema.service';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
@@ -23,9 +23,9 @@ export class GerenteReportesComponent implements OnInit {
 
   private route = inject(ActivatedRoute);
   private tecnicoService = inject(TecnicoService);
-  private problemaService = inject(ProblemaService);
   private authService = inject(AuthService);
-
+  private http = inject(HttpClient); // Inyectamos HttpClient
+  private cdr = inject(ChangeDetectorRef);
   ngOnInit(): void {
     const usuario = this.authService.getUsuarioActual();
     this.empresaId = usuario?.empresaId || null;
@@ -44,31 +44,43 @@ export class GerenteReportesComponent implements OnInit {
           // 1. Filtramos solo los técnicos de la empresa actual
           const misTecnicos = tecnicos.filter(t => t.empresa?.empresaId === this.empresaId);
           
-          // 2. Agrupamos y contamos cuántos hay por cada Zona
-          const conteoPorZona: any = {};
+          // 2. Agrupamos y guardamos los nombres en un arreglo por cada Zona
+          const agrupadoPorZona: any = {};
           misTecnicos.forEach(t => {
-            const nombreZona = t.zonaEmpresa?.zonaEmpresaNombre || 'Sin Zona Asignada';
-            if (!conteoPorZona[nombreZona]) {
-              conteoPorZona[nombreZona] = 0;
+            const zonaNombre = t.zonaEmpresa?.zonaEmpresaNombre || 'Sin Zona Asignada';
+            
+            // Si la zona no existe en el objeto, la inicializamos con un arreglo vacío
+            if (!agrupadoPorZona[zonaNombre]) {
+              agrupadoPorZona[zonaNombre] = [];
             }
-            conteoPorZona[nombreZona]++;
+            
+            // Agregamos el nombre del técnico al arreglo de esa zona
+            // (Asumiendo que la propiedad se llama tecnicoNombre)
+            const nombreTecnico = t.tecnicoNombre || 'Técnico sin nombre';
+            agrupadoPorZona[zonaNombre].push(nombreTecnico);
           });
 
           // 3. Convertimos el objeto a un arreglo para mostrarlo en el HTML
-          this.datosZonas = Object.keys(conteoPorZona).map(zona => ({
+          this.datosZonas = Object.keys(agrupadoPorZona).map(zona => ({
             zonaNombre: zona,
-            cantidadTecnicos: conteoPorZona[zona]
+            cantidadTecnicos: agrupadoPorZona[zona].length, // La cantidad es el tamaño del arreglo
+            nombresTecnicos: agrupadoPorZona[zona] // Pasamos el arreglo completo de nombres a la vista
           }));
+          this.cdr.detectChanges();
         },
         error: (err) => console.error('Error al cargar técnicos para el reporte', err)
       });
       
     } else if (this.tipoReporte === 'Problema') {
-      this.problemaService.getProblemas().subscribe({
-        next: (problemas) => {
-          this.datosProblemas = problemas;
+      this.http.get<any[]>('http://localhost:8080/api/reportes/problemas-frecuentes').subscribe({
+        next: (reporte) => {
+          console.log('DATOS RECIBIDOS DEL BACKEND:', reporte); // 👀 Veremos esto en F12
+          this.datosProblemas = reporte; 
+          this.cdr.detectChanges(); // 🔄 Fuerza a Angular a actualizar la tabla
         },
-        error: (err) => console.error('Error al cargar problemas para el reporte', err)
+        error: (err) => {
+          console.error('Error al cargar el reporte de problemas', err);
+        }
       });
     }
   }

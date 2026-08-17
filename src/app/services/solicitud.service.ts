@@ -46,5 +46,8 @@ getSolicitudesPorTecnicoYEstado(tecnicoId: number, estado: string): Observable<a
 calificarSolicitud(id: number, estrellas: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}/calificar/${estrellas}`, {}, { headers: this.getHeaders() });
   }
+obtenerHistorialTecnico(tecnicoId: number) {
+  return this.http.get<any[]>(`http://localhost:8080/api/solicitudes/historial/tecnico/${tecnicoId}`);
+}
   }
 

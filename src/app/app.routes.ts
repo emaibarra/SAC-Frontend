@@ -23,6 +23,7 @@ import { SolicitarTecnico } from './components/cliente/solicitar-tecnico/solicit
 import { ClienteHistorial } from './components/cliente/cliente-historial/cliente-historial';  
 import { ClienteReclamo } from './components/cliente/cliente-reclamo/cliente-reclamo';
 import { ClientePerfil } from './components/cliente/cliente-perfil/cliente-perfil';
+import { TecnicoHistorialComponent } from './components/tecnico/tecnico-historial/tecnico-historial';
 export const routes: Routes = [
   // Ruta pública
   { path: 'login', component: LoginComponent },
@@ -101,6 +102,8 @@ export const routes: Routes = [
     canActivate: [roleGuard],
     data: { rolEsperado: 'TECNICO' } // Asumiendo que crearás este rol
   },
+  { path: 'tecnico/historial', component: TecnicoHistorialComponent, 
+    canActivate: [roleGuard], data: { rolEsperado: 'TECNICO' } },  
   // Redirecciones por defecto
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
